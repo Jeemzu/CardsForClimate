@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     //Active player cards
     public ActionCard[] activePlayerCards = new ActionCard[3];
     public int activePlayerCardCount = 0;
+
+    //negative hope counter
+    public int negativeHope = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +50,12 @@ public class GameManager : MonoBehaviour
         GenerateActionDeck();
         FillMasterEventDeck();
         GenerateEventDeck();
+
+        //draw five cards
+        for(int i = 0; i < 5; i++)
+        {
+            DrawCard();
+        }
     }
 
     // Update is called once per frame
@@ -61,16 +70,21 @@ public class GameManager : MonoBehaviour
         activeEventCard = CurrentEventDeck[0];
         CurrentEventDeck.RemoveAt(0);
 
-        
+        //Update Money and Carbon
+        Money -= activeEventCard.costMoney;
+        Carbon -= activeEventCard.costCarbon;
+
+        //Update Hope stat
+        negativeHope -= activeEventCard.negativeHope;
     }
 
     public void EndTurn()
     {
         //Check if the card has a super event card
-        if(SuperEventCards[activeEventCard.name])
+        if(SuperEventCards[activeEventCard.cardName])
         {
             //Increment the cards supercastrophe potential
-            SuperEventCards[activeEventCard.name].IncrementCard();
+            SuperEventCards[activeEventCard.cardName].IncrementCard();
         }
 
         
@@ -81,6 +95,14 @@ public class GameManager : MonoBehaviour
             Money -= activePlayerCards[i].costMoney;
             //update carbon cost
             Carbon -= activePlayerCards[i].costCarbon;
+            //update hope card
+            negativeHope += activePlayerCards[i].hope;
+        }
+
+        //Check if hope is negative
+        if(negativeHope > 0)
+        {
+            negativeHope = 0;
         }
         //check momentum for super positive event
         if(activePlayerCardCount >= 3)
@@ -101,7 +123,9 @@ public class GameManager : MonoBehaviour
 
     public void DrawCard()
     {
-
+        //Draw a card and add it to the player hand
+        PlayerHand.Add(CurrentActionDeck[0]);
+        CurrentActionDeck.RemoveAt(0);
     }
 
     public void MoneyCarbonTick()
