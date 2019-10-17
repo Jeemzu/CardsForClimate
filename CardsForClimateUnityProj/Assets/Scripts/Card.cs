@@ -5,7 +5,7 @@ using UnityEngine;
 public class Card : MonoBehaviour
 {
     public int Momentum { get; set; }
-
+    public string cardName;
     // Start is called before the first frame update
     void Start()
     {

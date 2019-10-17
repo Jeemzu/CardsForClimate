@@ -25,13 +25,23 @@ public class GameManager : MonoBehaviour
     public List<EventCard> CurrentEventDeck = new List<EventCard>();
     public List<ActionCard> CurrentActionDeck = new List<ActionCard>();
 
+    //Dictionary for possible catastrophe cards
+    public Dictionary<string, SuperCard> SuperEventCards = new Dictionary<string, SuperCard>();
+    //List of positive event cards
+    public List<EventCard> PositiveCards = new List<EventCard>();
+
+    //Active event card
+    public EventCard activeEventCard;
+    //Active player cards
+    public ActionCard[] activePlayerCards = new ActionCard[3];
+    public int activePlayerCardCount = 0;
     // Start is called before the first frame update
     void Start()
     {
         //Money and Carbon start at 20 every game
         Money = 20;
         Carbon = 20;
-
+        
         //Start the game by generating the decks players will draw from
         FillMasterActionDeck();
         GenerateActionDeck();
@@ -43,6 +53,50 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void BeginTurn()
+    {
+        //Pull an event card and remove it from the deck
+        activeEventCard = CurrentEventDeck[0];
+        CurrentEventDeck.RemoveAt(0);
+
+        
+    }
+
+    public void EndTurn()
+    {
+        //Check if the card has a super event card
+        if(SuperEventCards[activeEventCard.name])
+        {
+            //Increment the cards supercastrophe potential
+            SuperEventCards[activeEventCard.name].IncrementCard();
+        }
+
+        
+        //Update based on player cards
+        for (int i = 0; i < activePlayerCardCount; i++)
+        {
+            //update money
+            Money -= activePlayerCards[i].costMoney;
+            //update carbon cost
+            Carbon -= activePlayerCards[i].costCarbon;
+        }
+        //check momentum for super positive event
+        if(activePlayerCardCount >= 3)
+        {
+            //Insert positive event
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), PositiveCards[Random.Range(0, PositiveCards.Count)]);
+        }
+
+        //Clear activeplayercards and reset counter
+        for(int j = 0; j < activePlayerCards.Length; j++)
+        {
+            activePlayerCards[j] = null;
+        }
+        //reset counter
+        activePlayerCardCount = 0;
+
     }
 
     public void DrawCard()
