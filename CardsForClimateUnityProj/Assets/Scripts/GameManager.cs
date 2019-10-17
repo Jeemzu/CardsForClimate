@@ -13,13 +13,17 @@ public class GameManager : MonoBehaviour
     public List<EventCard> MasterEventDeckRef = new List<EventCard>();
     public List<ActionCard> MasterActionDeckRef = new List<ActionCard>();
 
+    //Separate reference decks for super events
+    public List<EventCard> MasterSuperBadEventDeckRef = new List<EventCard>();
+    public List<EventCard> MasterSuperGoodEventDeckRef = new List<EventCard>();
+
     //Current cards in player's hand and previously played cards
     public List<ActionCard> PlayerHand = new List<ActionCard>();
     public List<Card> PlayedCards = new List<Card>();
 
     //Keeps track of what cards come next from the decks, receives data from master lists
-    public Queue<EventCard> CurrentEventDeck = new Queue<EventCard>();
-    public Queue<ActionCard> CurrentActionDeck = new Queue<ActionCard>();
+    public List<EventCard> CurrentEventDeck = new List<EventCard>();
+    public List<ActionCard> CurrentActionDeck = new List<ActionCard>();
 
     // Start is called before the first frame update
     void Start()
@@ -68,7 +72,7 @@ public class GameManager : MonoBehaviour
             //Generate random number to choose a card from master queue
             int ranNum = Random.Range(0, MasterActionDeckRef.Count);
             //Add chosen card to queue of action deck that player draws from
-            CurrentActionDeck.Enqueue(MasterActionDeckRef[ranNum]);
+            CurrentActionDeck.Add(MasterActionDeckRef[ranNum]);
             //Remove added card from master queue to avoid duplicates
             MasterActionDeckRef.RemoveAt(ranNum);
         } while (MasterActionDeckRef.Count > 0);
@@ -81,7 +85,7 @@ public class GameManager : MonoBehaviour
             //Generate random number to choose a card from master queue
             int ranNum = Random.Range(0, MasterEventDeckRef.Count);
             //Add chosen card to queue of action deck that player draws from
-            CurrentEventDeck.Enqueue(MasterEventDeckRef[ranNum]);
+            CurrentEventDeck.Add(MasterEventDeckRef[ranNum]);
             //Remove added card from master queue to avoid duplicates
             MasterEventDeckRef.RemoveAt(ranNum);
         } while (MasterEventDeckRef.Count > 0);
