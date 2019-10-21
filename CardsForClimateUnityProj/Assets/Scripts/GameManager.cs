@@ -51,7 +51,8 @@ public class GameManager : MonoBehaviour
         GenerateEventDeck();
 
         //DrawCard();
-        /*for(int j = 0; j < MasterActionDeckRef.Count; j++)
+        /*
+        for(int j = 0; j < MasterActionDeckRef.Count; j++)
         {
             Debug.Log(MasterActionDeckRef[j].cardName + ":" + MasterActionDeckRef[j].cardDesc + ":" + MasterActionDeckRef[j].costCarbon + ":" + MasterActionDeckRef[j].hope + ":" + MasterActionDeckRef[j].momentum + ":" + MasterActionDeckRef[j].costMoney);
         }
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log("_________________________________");*/
-
+        
         for (int i = 0; i < CurrentActionDeck.Count; i++)
         {
             Debug.Log(CurrentActionDeck[i].cardName + ":" + CurrentActionDeck[i].cardDesc + ":" + CurrentActionDeck[i].costCarbon + ":" + CurrentActionDeck[i].hope + ":" + CurrentActionDeck[i].momentum + ":" + CurrentActionDeck[i].costMoney);
