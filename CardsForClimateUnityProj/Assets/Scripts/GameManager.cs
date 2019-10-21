@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
 
     //negative hope counter
     public int negativeHope = 0;
-    // Start is called before the first frame update
     void Start()
     {
         //Money and Carbon start at 20 every game
@@ -51,10 +50,30 @@ public class GameManager : MonoBehaviour
         FillMasterEventDeck();
         GenerateEventDeck();
 
-        //draw five cards
-        for(int i = 0; i < 5; i++)
+        //DrawCard();
+        /*for(int j = 0; j < MasterActionDeckRef.Count; j++)
         {
-            DrawCard();
+            Debug.Log(MasterActionDeckRef[j].cardName + ":" + MasterActionDeckRef[j].cardDesc + ":" + MasterActionDeckRef[j].costCarbon + ":" + MasterActionDeckRef[j].hope + ":" + MasterActionDeckRef[j].momentum + ":" + MasterActionDeckRef[j].costMoney);
+        }
+        Debug.Log("_________________________________");
+
+        for (int k = 0; k < MasterEventDeckRef.Count; k++)
+        {
+            Debug.Log(MasterEventDeckRef[k].cardName + ":" + MasterEventDeckRef[k].cardDesc + ":" + MasterEventDeckRef[k].costCarbon + ":" + MasterEventDeckRef[k].hope + ":" + MasterEventDeckRef[k].momentum + ":" + MasterEventDeckRef[k].costMoney);
+        }
+
+        Debug.Log("_________________________________");*/
+
+        for (int i = 0; i < CurrentActionDeck.Count; i++)
+        {
+            Debug.Log(CurrentActionDeck[i].cardName + ":" + CurrentActionDeck[i].cardDesc + ":" + CurrentActionDeck[i].costCarbon + ":" + CurrentActionDeck[i].hope + ":" + CurrentActionDeck[i].momentum + ":" + CurrentActionDeck[i].costMoney);
+        }
+
+        Debug.Log("_________________________________");
+
+        for (int h = 0; h < CurrentEventDeck.Count; h++)
+        {
+            Debug.Log(CurrentEventDeck[h].cardName + ":" + CurrentEventDeck[h].cardDesc + ":" + CurrentEventDeck[h].costCarbon + ":" + CurrentEventDeck[h].hope + ":" + CurrentEventDeck[h].momentum + ":" + CurrentEventDeck[h].costMoney);
         }
     }
 
@@ -123,9 +142,14 @@ public class GameManager : MonoBehaviour
 
     public void DrawCard()
     {
-        //Draw a card and add it to the player hand
-        PlayerHand.Add(CurrentActionDeck[0]);
-        CurrentActionDeck.RemoveAt(0);
+        //Draw cards until player hand is full
+        do
+        {
+            //Draw a card and add it to the player hand
+            PlayerHand.Add(CurrentActionDeck[0]);
+            CurrentActionDeck.RemoveAt(0);
+        } while (PlayerHand.Count < 5);
+        
     }
 
     public void MoneyCarbonTick()
@@ -135,12 +159,54 @@ public class GameManager : MonoBehaviour
 
     public void FillMasterActionDeck()
     {
+        //Create text asset for the csv file
+        TextAsset cardData = Resources.Load<TextAsset>("ActionCards");
 
+        //split the cards into different areas based on lines
+        string[] data = cardData.text.Split(new char[] { '\n' });
+
+        //Loop through card data
+        for(int i = 1; i < data.Length; i++)
+        {
+            //split the whole data array into indiviual columns from the row
+            string[] row = data[i].Split(new char[] { '|' });
+            //Temp action card for creation
+            ActionCard aCard = new ActionCard();
+            int.TryParse(row[0], out aCard.cardNumber);
+            aCard.cardName = row[1];
+            aCard.cardDesc = row[2];
+            int.TryParse(row[3], out aCard.costCarbon);
+            int.TryParse(row[4], out aCard.hope);
+            int.TryParse(row[5], out aCard.momentum);
+            int.TryParse(row[6], out aCard.costMoney);
+            MasterActionDeckRef.Add(aCard);
+        }
     }
 
     public void FillMasterEventDeck()
     {
+        //Create text asset for the csv file
+        TextAsset cardData = Resources.Load<TextAsset>("EventCards");
 
+        //split the cards into different areas based on lines
+        string[] data = cardData.text.Split(new char[] { '\n' });
+
+        //Loop through card data
+        for (int i = 1; i < data.Length; i++)
+        {
+            //split the whole data array into indiviual columns from the row
+            string[] row = data[i].Split(new char[] { '|' });
+            //Temp action card for creation
+            EventCard eCard = new EventCard();
+            int.TryParse(row[0], out eCard.cardNumber);
+            eCard.cardName = row[1];
+            eCard.cardDesc = row[2];
+            int.TryParse(row[3], out eCard.costCarbon);
+            int.TryParse(row[4], out eCard.hope);
+            int.TryParse(row[5], out eCard.momentum);
+            int.TryParse(row[6], out eCard.costMoney);
+            MasterEventDeckRef.Add(eCard);
+        }
     }
 
     public void GenerateActionDeck()

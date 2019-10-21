@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class Card : MonoBehaviour
 {
-    public int Momentum { get; set; }
+    public int cardNumber;
+    public int momentum;
     public int costMoney;
     public int costCarbon;
     public string cardName;
+    public string cardDesc;
+    public int hope;
     // Start is called before the first frame update
     void Start()
     {

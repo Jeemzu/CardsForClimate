@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ActionCard : Card
 {
-    public int hope = 0;
     // Start is called before the first frame update
     void Start()
     {
