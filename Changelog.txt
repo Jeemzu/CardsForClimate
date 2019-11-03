@@ -1,0 +1,21 @@
+11/3/2019
+Commit message "Fixed bugs in turn system, redesigned card playing system and tested multiple turns"
+Details
+-Fixed bug where incorrect card would be played
+-Fixed index out of bounds exception on playerhand
+-fixed index out of bounds exception on activePlayerhand
+-fixed display bug with stats and end of turn
+-Added display of turn ending and beginning in correct methods
+-Fixed hope being greater than 0 in display messages
+-Added message for when positive hope must be played
+-Added validpos check for when when cards are played
+-Fixed empty card slot allowing to be played, now displays proper message for missing card at slot
+-Changed check for valid hope values being played
+-Changed ValidHopeCard method to check only playercard
+-Fixed incorrect hope stat being calculated in turn beginning
+-Added check for number of cards played per turn and momentum
+-Momentum now properly tracks during turn phase and allows for 3 cards to be played
+-Displays updated hand if turn has momentum after a card has been played
+-Now displays stats at end of turn aswell as the beginning of it
+-Changed incrementCard method to add in super negative events after single instance of event cards being played
+-Commented out adding positive event cards as we currently have none for testing

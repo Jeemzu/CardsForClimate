@@ -69,37 +69,37 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\SuperCard.cs" />
     <Reference Include="Unity.Timeline.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Timeline.dll</HintPath>
     </Reference>
     <Reference Include="Unity.CollabProxy.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.CollabProxy.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Rider.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.Rider.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Sprite.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.2D.Sprite.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.2D.Tilemap.Editor">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
-      <HintPath>C:/Users/Austin/Documents/cardsforclimate/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
+      <HintPath>C:/Users/Axf47/Documents/cardsforclimato/CardsForClimate/CardsForClimateUnityProj/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>

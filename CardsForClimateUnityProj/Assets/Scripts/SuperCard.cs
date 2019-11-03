@@ -19,17 +19,8 @@ public class SuperCard : MonoBehaviour
     //Add to the counter as card is played
     public void IncrementCard()
     {
-        //Increment the counter on card played
-        cardCounter++;
-
-        //Check if the card is a catastrophe with lower counter threshold or if meets threshold
-        if (cardCounter >= 2)
-        {
-            //Get a random position in the deck and shuffle in card
-            gm.CurrentEventDeck.Insert(Random.Range(0, gm.CurrentEventDeck.Count), superCard);
-            //reset card counter
-            cardCounter = 0;
-        }
+       //Get a random position in the deck and shuffle in card
+       gm.CurrentEventDeck.Insert(Random.Range(0, gm.CurrentEventDeck.Count), superCard);        
     }
 }
 
