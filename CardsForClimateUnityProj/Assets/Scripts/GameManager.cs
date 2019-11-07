@@ -47,6 +47,8 @@ public class GameManager : MonoBehaviour
     bool hasMomemtum = false;
     //Boolean for if slot is a valid slot
     bool validPos = true;
+    //Boolean for game lost status
+    bool gameOver = false;
 
     //negative hope counter
     public int negativeHope = 0;
@@ -63,6 +65,9 @@ public class GameManager : MonoBehaviour
         GenerateEventDeck();
 
         DrawCard();
+
+        Debug.Log("Cards For Climate!");
+        Debug.Log("Press P to start your turn and advance further");
         /*
         for(int j = 0; j < MasterActionDeckRef.Count; j++)
         {
@@ -94,7 +99,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         //Testing key for turn beginning
-        if (Input.GetKeyDown(KeyCode.P))
+        if (!gameOver && Input.GetKeyDown(KeyCode.P))
         {
             //Call begin turn to intialize event card
             BeginTurn();
@@ -331,6 +336,9 @@ public class GameManager : MonoBehaviour
         //Replenish player hand
         DrawCard();
 
+        //Check the game loss conditions
+        GameEnd();
+
         /*Debug.Log("Card Event: " + activeEventCard.cardName);
         Debug.Log("Card Description: " + activeEventCard.cardDesc);
         Debug.Log("Card Stats Money: " + activeEventCard.costMoney + " | CO2: " + activeEventCard.costCarbon + " | Hope: " + activeEventCard.hope);*/
@@ -370,9 +378,34 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void MoneyCarbonTick()
+    //Method for ending the game
+    public void GameEnd()
     {
+        //Check the loss conditions for the game
+        //If Carbon reaches 30 then gameover
+        //if money reaches 0 then gameover
+        //if hope reaches -3 then gameover
+        if(Carbon >= 30 || Money <= 0 || negativeHope <= -3)
+        {
+            //Change status of gameover
+            gameOver = true;
 
+            //Display message based on loss condition
+            if(Carbon >= 30)
+            {
+                Debug.Log("Carbon levels are too high now! Game Over");
+            } else if (Money <= 0)
+            {
+                Debug.Log("We have run out of money for further action! Game Over");
+            } else if(negativeHope <= -3)
+            {
+                Debug.Log("People have lost too much to continue! Game Over");
+            }
+        //Check game win conditions
+        } else if(Carbon <= 0)
+        {
+            Debug.Log("The Planet is Saved! We have begun reducing carbon emmisions and are track to help the world! You Win!");
+        }
     }
 
     public void FillMasterActionDeck()

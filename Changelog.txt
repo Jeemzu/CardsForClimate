@@ -19,3 +19,11 @@ Details
 -Now displays stats at end of turn aswell as the beginning of it
 -Changed incrementCard method to add in super negative events after single instance of event cards being played
 -Commented out adding positive event cards as we currently have none for testing
+
+11/7/2019
+
+Details
+Commit Message "Added method for checking the win and loss conditions of the game"
+-Removed MoneyTickLossMethod
+-Added gameOver boolean
+-Added GameEnd method that checks for player victory defeat
