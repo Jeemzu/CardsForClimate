@@ -17,7 +17,7 @@ public class SuperCard : MonoBehaviour
     }
 
     //Add to the counter as card is played
-    public void IncrementCard()
+    public void AddSuperToDeck()
     {
        //Get a random position in the deck and shuffle in card
        gm.CurrentEventDeck.Insert(Random.Range(0, gm.CurrentEventDeck.Count), superCard);        

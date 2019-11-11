@@ -21,9 +21,16 @@ Details
 -Commented out adding positive event cards as we currently have none for testing
 
 11/7/2019
-
-Details
 Commit Message "Added method for checking the win and loss conditions of the game"
+Details
 -Removed MoneyTickLossMethod
 -Added gameOver boolean
 -Added GameEnd method that checks for player victory defeat
+
+11/11/2019
+Commit Message "Added new function for setting intial values for game start and restart, and added fourth loss condition to game"
+Details
+-Added SetUpGame method which sets/resets the values for all variables handled by the game
+-Added setUpGame call to start method instead of individual lines
+-Changed incrementCard in SuperCard to AddSuperToDeck and changed its call line
+-Added foruth loss condition to GameEnd method

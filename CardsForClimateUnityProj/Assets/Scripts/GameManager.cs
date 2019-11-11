@@ -57,14 +57,16 @@ public class GameManager : MonoBehaviour
         //Money and Carbon start at 20 every game
         Money = 20;
         Carbon = 20;
-        
-        //Start the game by generating the decks players will draw from
+
+        /* //Start the game by generating the decks players will draw from
         FillMasterActionDeck();
         GenerateActionDeck();
         FillMasterEventDeck();
         GenerateEventDeck();
 
-        DrawCard();
+        DrawCard();*/
+
+        SetupGame();
 
         Debug.Log("Cards For Climate!");
         Debug.Log("Press P to start your turn and advance further");
@@ -286,7 +288,7 @@ public class GameManager : MonoBehaviour
         if (SuperEventCards.ContainsKey(activeEventCard.cardName))
         {
             //Increment the cards supercastrophe potential
-            SuperEventCards[activeEventCard.cardName].IncrementCard();
+            SuperEventCards[activeEventCard.cardName].AddSuperToDeck();
         }
 
         
@@ -385,7 +387,8 @@ public class GameManager : MonoBehaviour
         //If Carbon reaches 30 then gameover
         //if money reaches 0 then gameover
         //if hope reaches -3 then gameover
-        if(Carbon >= 30 || Money <= 0 || negativeHope <= -3)
+        //If eventdeck runs out of cards then gameover
+        if(Carbon >= 30 || Money <= 0 || negativeHope <= -3 || CurrentEventDeck.Count == 0)
         {
             //Change status of gameover
             gameOver = true;
@@ -398,6 +401,9 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log("We have run out of money for further action! Game Over");
             } else if(negativeHope <= -3)
+            {
+                Debug.Log("The planet has run out of time! Game Over");
+            } else if(CurrentEventDeck.Count == 0)
             {
                 Debug.Log("People have lost too much to continue! Game Over");
             }
@@ -484,5 +490,66 @@ public class GameManager : MonoBehaviour
             //Remove added card from master queue to avoid duplicates
             MasterEventDeckRef.RemoveAt(ranNum);
         } while (MasterEventDeckRef.Count > 0);
+    }
+
+    //Sets up the game by generating all decks and reseting default values
+    public void SetupGame()
+    {
+        //Reference list of cards for queues to pull from
+        MasterEventDeckRef = new List<EventCard>();
+        MasterActionDeckRef = new List<ActionCard>();
+
+        //Separate reference decks for super events
+        MasterSuperBadEventDeckRef = new List<EventCard>();
+        MasterSuperGoodEventDeckRef = new List<EventCard>();
+
+        //Current cards in player's hand and previously played cards
+        PlayerHand = new List<ActionCard>();
+        PlayedCards = new List<Card>();
+
+        //Keeps track of what cards come next from the decks, receives data from master lists
+        CurrentEventDeck = new List<EventCard>();
+        CurrentActionDeck = new List<ActionCard>();
+
+        //Dictionary for possible catastrophe cards
+        SuperEventCards = new Dictionary<string, SuperCard>();
+        //List of positive event cards
+        PositiveCards = new List<EventCard>();
+
+        //Active event card
+        activeEventCard = null;
+        //Active player cards
+        activePlayerCards = new ActionCard[3];
+        activePlayerCardCount = 0;
+        //Current player card
+
+        currentCardIndex = 0;
+
+        //Boolean for if turn is finished
+        turnActive = false;
+        //Boolean for if hope requirements met
+        hopeValid = true;
+        //Boolean for if momentum is active
+        hasMomemtum = false;
+        //Boolean for if slot is a valid slot
+        validPos = true;
+        //Boolean for game lost status
+        gameOver = false;
+
+        //negative hope counter
+        negativeHope = 0;
+
+        //Money and Carbon start at 20 every game
+        Money = 20;
+        Carbon = 20;
+
+        //Start the game by generating the decks players will draw from
+        FillMasterActionDeck();
+        GenerateActionDeck();
+        FillMasterEventDeck();
+        GenerateEventDeck();
+
+        //fill the player's hand
+        DrawCard();
     }
 }
