@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public List<ActionCard> CurrentActionDeck = new List<ActionCard>();
 
     //Dictionary for possible catastrophe cards
-    public Dictionary<string, SuperCard> SuperEventCards = new Dictionary<string, SuperCard>();
+    public Dictionary<string, EventCard> SuperEventCards = new Dictionary<string, EventCard>();
     //List of positive event cards
     public List<EventCard> PositiveCards = new List<EventCard>();
 
@@ -83,18 +83,20 @@ public class GameManager : MonoBehaviour
         }
 
         Debug.Log("_________________________________");*/
+
+        /* for (int i = 0; i < CurrentActionDeck.Count; i++)
+         {
+             Debug.Log(CurrentActionDeck[i].cardName + ":" + CurrentActionDeck[i].cardDesc + ":" + CurrentActionDeck[i].costCarbon + ":" + CurrentActionDeck[i].hope + ":" + CurrentActionDeck[i].momentum + ":" + CurrentActionDeck[i].costMoney);
+         }
+
+         Debug.Log("_________________________________");
+
+         for (int h = 0; h < CurrentEventDeck.Count; h++)
+         {
+             Debug.Log(CurrentEventDeck[h].cardName + ":" + CurrentEventDeck[h].cardDesc + ":" + CurrentEventDeck[h].costCarbon + ":" + CurrentEventDeck[h].hope + ":" + CurrentEventDeck[h].momentum + ":" + CurrentEventDeck[h].costMoney);
+         }*/
         
-       /* for (int i = 0; i < CurrentActionDeck.Count; i++)
-        {
-            Debug.Log(CurrentActionDeck[i].cardName + ":" + CurrentActionDeck[i].cardDesc + ":" + CurrentActionDeck[i].costCarbon + ":" + CurrentActionDeck[i].hope + ":" + CurrentActionDeck[i].momentum + ":" + CurrentActionDeck[i].costMoney);
-        }
-
-        Debug.Log("_________________________________");
-
-        for (int h = 0; h < CurrentEventDeck.Count; h++)
-        {
-            Debug.Log(CurrentEventDeck[h].cardName + ":" + CurrentEventDeck[h].cardDesc + ":" + CurrentEventDeck[h].costCarbon + ":" + CurrentEventDeck[h].hope + ":" + CurrentEventDeck[h].momentum + ":" + CurrentEventDeck[h].costMoney);
-        }*/
+        
     }
 
     // Update is called once per frame
@@ -146,13 +148,29 @@ public class GameManager : MonoBehaviour
             hopeValid = false;
         }
         turnActive = true;
-
-        Debug.Log("_________________________________");
-        Debug.Log("Player Hand");
-        for (int i = 0; i < PlayerHand.Count; i++)
+        if (PlayerCardsHope())
         {
-            Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+            Debug.Log("_________________________________");
+            Debug.Log("Player Hand");
+            for (int i = 0; i < PlayerHand.Count; i++)
+            {
+                Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
 
+            }
+        } else
+        {
+            //Display message based on if the player has enough money for redraw
+            if (Money >= 5)
+            {
+                Debug.Log("There are no valid hope cards in your hand. You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
+            }
+            else
+            {                
+                gameOver = true;
+                turnActive = false;
+                EndTurn();
+                Debug.Log("There are no valid hope cards in your hand and you do not have enough money to redraw your hand. You lose");
+            }
         }
     }
 
@@ -160,122 +178,144 @@ public class GameManager : MonoBehaviour
     {
         if (turnActive)
         {
-            if (activePlayerCardCount == 0 || (activePlayerCardCount < 3 && hasMomemtum)) {
-                //Check to see if the player hit any of the keys to play cards
-                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Alpha5))
+            if (PlayerCardsHope())
+            {
+                if (activePlayerCardCount == 0 || (activePlayerCardCount < 3 && hasMomemtum))
                 {
-                    //Check which key is pressed to determine the card number played
-                    if (Input.GetKeyDown(KeyCode.Alpha1))
+                    //Check to see if the player hit any of the keys to play cards
+                    if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Alpha5))
                     {
-                        currentCard = PlayerHand[0];
-                        currentCardIndex = 0;
-                        validPos = true;
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Alpha2))
-                    {
-                        currentCard = PlayerHand[1];
-                        currentCardIndex = 1;
-                        validPos = true;
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Alpha3))
-                    {
-                        currentCard = PlayerHand[2];
-                        currentCardIndex = 2;
-                        validPos = true;
-
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Alpha4))
-                    {
-                        //If the card number has decreased then check if there are enough cards for this key to be valid
-                        if (PlayerHand.Count > 3)
+                        //Check which key is pressed to determine the card number played
+                        if (Input.GetKeyDown(KeyCode.Alpha1))
                         {
-                            currentCard = PlayerHand[3];
-                            currentCardIndex = 3;
+                            currentCard = PlayerHand[0];
+                            currentCardIndex = 0;
                             validPos = true;
                         }
-                        else
+                        else if (Input.GetKeyDown(KeyCode.Alpha2))
                         {
-                            Debug.Log("No card is this slot, try again");
-                            Debug.Log("_________________________________");
-                            Debug.Log("Player Hand");
-                            for (int i = 0; i < PlayerHand.Count; i++)
-                            {
-                                Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
-
-                            }
-                            //This position is not valid
-                            validPos = false;
-                        }
-
-
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Alpha5))
-                    {
-                        Debug.Log("Pressed 5");
-                        //If the card number has decreased then check if there are enough cards for this key to be valid
-                        if (PlayerHand.Count > 4)
-                        {
-                            currentCard = PlayerHand[4];
-                            currentCardIndex = 4;
+                            currentCard = PlayerHand[1];
+                            currentCardIndex = 1;
                             validPos = true;
                         }
-                        else
+                        else if (Input.GetKeyDown(KeyCode.Alpha3))
                         {
-                            //No card is in this position of the hand display a message and redisplay hand
-                            Debug.Log("No card is this slot, try again");
-                            Debug.Log("_________________________________");
-                            Debug.Log("Player Hand");
-                            for (int i = 0; i < PlayerHand.Count; i++)
-                            {
-                                Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+                            currentCard = PlayerHand[2];
+                            currentCardIndex = 2;
+                            validPos = true;
 
-                            }
-                            //This position is not valid
-                            validPos = false;
                         }
-                    }
-                    //If this turn has a negative hope event card then it will check if the card played has a valid hope value to be played and if the position is a valid one to check
-                    if (validPos && !hopeValid)
-                    {
-                        ValidHopeCard(currentCard);
-                    }
-
-                    //Either the card has passed the appropriate hope checks to be played or the player currently has momentum then check what card was played and if the position is a valid one to check
-                    if (validPos && (hopeValid || hasMomemtum))
-                    {
-                        //Display the name of the card the plyaer has played
-                        Debug.Log("Card played Name: " + currentCard.cardName + " Description: " + currentCard.cardDesc + " Money: " + currentCard.costMoney + " CO2:" + currentCard.costCarbon + " Hope:" + currentCard.hope + " Momentum:" + currentCard.momentum);
-                        //Add that card to the activePlayedCards array for stat checking after turn completion
-                        activePlayerCards[activePlayerCardCount] = currentCard;
-                        //Increment the activePlayerCardCount
-                        activePlayerCardCount++;
-                        PlayerHand.RemoveAt(currentCardIndex);
-
-                        Debug.Log("Playerhand count = " + PlayerHand.Count);
-
-                        //Check if the card has momentum
-                        if (currentCard.momentum == 0 || activePlayerCardCount == 3)
+                        else if (Input.GetKeyDown(KeyCode.Alpha4))
                         {
-                            //if the card does not have momentum or if the max number of allowed cards to be played is reached then end the turn
-                            turnActive = false;
-                            EndTurn();
-                        } else
-                        {
-                            //Update has momentum bool
-                            hasMomemtum = true;
-                            //Display updated hand and message
-                            Debug.Log("Card played has momentum, play another card!");
-                            Debug.Log("_________________________________");
-                            Debug.Log("Player Hand");
-                            for (int i = 0; i < PlayerHand.Count; i++)
+                            //If the card number has decreased then check if there are enough cards for this key to be valid
+                            if (PlayerHand.Count > 3)
                             {
-                                Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+                                currentCard = PlayerHand[3];
+                                currentCardIndex = 3;
+                                validPos = true;
+                            }
+                            else
+                            {
+                                Debug.Log("No card is this slot, try again");
+                                Debug.Log("_________________________________");
+                                Debug.Log("Player Hand");
+                                for (int i = 0; i < PlayerHand.Count; i++)
+                                {
+                                    Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
 
+                                }
+                                //This position is not valid
+                                validPos = false;
+                            }
+
+
+                        }
+                        else if (Input.GetKeyDown(KeyCode.Alpha5))
+                        {
+                            Debug.Log("Pressed 5");
+                            //If the card number has decreased then check if there are enough cards for this key to be valid
+                            if (PlayerHand.Count > 4)
+                            {
+                                currentCard = PlayerHand[4];
+                                currentCardIndex = 4;
+                                validPos = true;
+                            }
+                            else
+                            {
+                                //No card is in this position of the hand display a message and redisplay hand
+                                Debug.Log("No card is this slot, try again");
+                                Debug.Log("_________________________________");
+                                Debug.Log("Player Hand");
+                                for (int i = 0; i < PlayerHand.Count; i++)
+                                {
+                                    Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+
+                                }
+                                //This position is not valid
+                                validPos = false;
+                            }
+                        }
+
+                        //If this turn has a negative hope event card then it will check if the card played has a valid hope value to be played and if the position is a valid one to check
+                        if (validPos && !hopeValid)
+                        {
+                            ValidHopeCard(currentCard);
+                        }
+
+                        //Either the card has passed the appropriate hope checks to be played or the player currently has momentum then check what card was played and if the position is a valid one to check
+                        if (validPos && (hopeValid || hasMomemtum))
+                        {
+                            //Display the name of the card the plyaer has played
+                            Debug.Log("Card played Name: " + currentCard.cardName + " Description: " + currentCard.cardDesc + " Money: " + currentCard.costMoney + " CO2:" + currentCard.costCarbon + " Hope:" + currentCard.hope + " Momentum:" + currentCard.momentum);
+                            //Add that card to the activePlayedCards array for stat checking after turn completion
+                            activePlayerCards[activePlayerCardCount] = currentCard;
+                            //Increment the activePlayerCardCount
+                            activePlayerCardCount++;
+                            PlayerHand.RemoveAt(currentCardIndex);
+
+                            Debug.Log("Playerhand count = " + PlayerHand.Count);
+
+                            //Check if the card has momentum
+                            if (currentCard.momentum == 0 || activePlayerCardCount == 3)
+                            {
+                                //if the card does not have momentum or if the max number of allowed cards to be played is reached then end the turn
+                                turnActive = false;
+                                EndTurn();
+                            }
+                            else
+                            {
+                                //Update has momentum bool
+                                hasMomemtum = true;
+                                //Display updated hand and message
+                                Debug.Log("Card played has momentum, play another card!");
+                                Debug.Log("_________________________________");
+                                Debug.Log("Player Hand");
+                                for (int i = 0; i < PlayerHand.Count; i++)
+                                {
+                                    Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+
+                                }
                             }
                         }
                     }
                 }
-            }            
+            } else
+            {
+                
+                //Redraw hand
+                if (Input.GetKeyDown(KeyCode.Alpha6))
+                {
+                    ReDrawHand();
+                   
+                }
+                //Forfeit the game
+                else if (Input.GetKeyDown(KeyCode.Alpha0))
+                {
+                    turnActive = false;
+                    EndTurn();
+                    Debug.Log("You forfeit");
+                }
+            }
         }                      
     }
 
@@ -288,7 +328,7 @@ public class GameManager : MonoBehaviour
         if (SuperEventCards.ContainsKey(activeEventCard.cardName))
         {
             //Increment the cards supercastrophe potential
-            SuperEventCards[activeEventCard.cardName].AddSuperToDeck();
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), SuperEventCards[activeEventCard.cardName]);
         }
 
         
@@ -308,12 +348,10 @@ public class GameManager : MonoBehaviour
         {
             negativeHope = 0;
         }
-        //check momentum for super positive event
-        if(activePlayerCardCount >= 3)
+        //check momentum for super positive event and if there are remaining super positive cards to be played
+        if(activePlayerCardCount >= 3 && PositiveCards.Count > 0)
         {
-            //Awaiting super positive cards to test feature
-            //Insert positive event
-            //CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), PositiveCards[Random.Range(0, PositiveCards.Count)]);
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), PositiveCards[Random.Range(0, PositiveCards.Count)]);
         }
 
         //Clear activeplayercards and reset counter
@@ -351,11 +389,82 @@ public class GameManager : MonoBehaviour
         //Draw cards until player hand is full
         do
         {
+            //Check if there are no futher cards
+            if (CurrentActionDeck.Count == 0)
+            {
+                break;
+            }
             //Draw a card and add it to the player hand
             PlayerHand.Add(CurrentActionDeck[0]);
-            CurrentActionDeck.RemoveAt(0);
+            CurrentActionDeck.RemoveAt(0);            
         } while (PlayerHand.Count < 5);
+
         
+    }
+
+    public void ReDrawHand()
+    {
+        //Take away 5 money from player
+        Money -= 5;
+        //Clear the players hand
+        do
+        {
+            PlayerHand.RemoveAt(0);
+        } while (PlayerHand.Count > 0);
+
+        //Redraw he player hand
+        DrawCard();
+
+        //Display new playerhand
+        if (PlayerCardsHope())
+        {
+            Debug.Log("_________________________________");
+            Debug.Log("Player Hand");
+            for (int i = 0; i < PlayerHand.Count; i++)
+            {
+                Debug.Log("Card Number: " + (i + 1) + "Name: " + PlayerHand[i].cardName + " Description: " + PlayerHand[i].cardDesc + " Money: " + PlayerHand[i].costMoney + " CO2:" + PlayerHand[i].costCarbon + " Hope:" + PlayerHand[i].hope + " Momentum:" + PlayerHand[i].momentum);
+
+            }
+        }
+        else
+        {
+            //Display message based on if the player has enough money for redraw
+            if (Money >= 5)
+            {
+                Debug.Log("There are no valid hope cards in your new hand. You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
+                Debug.Log("Money: " + Money);
+            }
+            else
+            {
+                gameOver = true;
+                turnActive = false;
+                EndTurn();
+                Debug.Log("There are no valid hope cards in your hand and you do not have enough money to redraw your hand. You lose");
+            }
+        }
+;    }
+
+    public bool PlayerCardsHope()
+    {
+        //Check if hope is an issue first
+        if(negativeHope >= 0 || hasMomemtum)
+        {
+            return true;
+        }
+        
+        //Loop through player hand
+        for(int i = 0; i < PlayerHand.Count; i++)
+        {
+            //If any card in the player's hand has a hope value then return true
+            if(PlayerHand[i].hope != 0)
+            {
+                return true;
+            }
+        }
+        
+
+        //If no card was found and hope is negative then return false
+        return false;
     }
 
     public void ValidHopeCard(ActionCard playedCard)
@@ -417,30 +526,74 @@ public class GameManager : MonoBehaviour
     public void FillMasterActionDeck()
     {
         //Create text asset for the csv file
-        TextAsset cardData = Resources.Load<TextAsset>("ActionCards");
-
+        TextAsset cardData = Resources.Load<TextAsset>("Cards");
+        string[] splitDecks = cardData.text.Split(new string[] { "EventCardSection" }, System.StringSplitOptions.None);
         //split the cards into different areas based on lines
-        string[] data = cardData.text.Split(new char[] { '\n' });
-
-        //Loop through card data
-        for(int i = 1; i < data.Length; i++)
+        string[] dataAction = splitDecks[0].Split(new char[] { '\n' });
+        //Loop through card data for action cards
+        for(int i = 2; i < dataAction.Length - 1; i++)
         {
+            
             //split the whole data array into indiviual columns from the row
-            string[] row = data[i].Split(new char[] { '|' });
+            string[] row = dataAction[i].Split(new char[] { '|' });
+           
             //Temp action card for creation
             ActionCard aCard = new ActionCard();
             int.TryParse(row[0], out aCard.cardNumber);
             aCard.cardName = row[1];
             aCard.cardDesc = row[2];
             int.TryParse(row[3], out aCard.costCarbon);
-            int.TryParse(row[4], out aCard.hope);
-            int.TryParse(row[5], out aCard.momentum);
-            int.TryParse(row[6], out aCard.costMoney);
+            int.TryParse(row[4], out aCard.costMoney);
+            int.TryParse(row[5], out aCard.hope);
+            int.TryParse(row[6], out aCard.momentum);            
             MasterActionDeckRef.Add(aCard);
+        }
+        string[] dataEvent = splitDecks[1].Split(new char[] { '\n' });
+        //Loop through card data
+        for (int k = 1; k < dataEvent.Length; k++)
+        {
+            //split the whole data array into indiviual columns from the row
+            string[] row = dataEvent[k].Split(new char[] { '|' });
+            //Temp action card for creation
+            EventCard eCard = new EventCard();
+            int.TryParse(row[0], out eCard.cardNumber);
+            eCard.cardName = row[1];
+            eCard.cardDesc = row[2];
+            int.TryParse(row[3], out eCard.costCarbon);
+            int.TryParse(row[4], out eCard.costMoney);
+            int.TryParse(row[5], out eCard.hope);
+            int.TryParse(row[6], out eCard.momentum);           
+
+            //Temp int for checking super positive event
+            int superPosEventInt = 0;
+            int.TryParse(row[7], out superPosEventInt);
+            //Temp int for checking super negative event
+            int superNegEventInt = 0;
+            int.TryParse(row[9], out superNegEventInt);
+            
+            //Check which deck to add it into
+            //Check if the card is marked as a super positive event
+            if(superPosEventInt == 1)
+            {
+                //If the card is super positive then sort it into that deck
+                PositiveCards.Add(eCard);
+
+            //Check if the card is marked as a super negative event
+            } else if(superNegEventInt == 1)
+            {
+                //if the card is marked as super negative that add it to the dictionary with respective counter card                
+                SuperEventCards.Add(row[8], eCard);
+                
+
+                //Else add the card to normal event deck
+            } else
+            {
+                MasterEventDeckRef.Add(eCard);
+            }           
         }
     }
 
-    public void FillMasterEventDeck()
+    /*public void FillMasterEventDeck()
     {
         //Create text asset for the csv file
         TextAsset cardData = Resources.Load<TextAsset>("EventCards");
@@ -464,7 +617,7 @@ public class GameManager : MonoBehaviour
             int.TryParse(row[6], out eCard.costMoney);
             MasterEventDeckRef.Add(eCard);
         }
-    }
+    }*/
 
     public void GenerateActionDeck()
     {
@@ -512,7 +665,7 @@ public class GameManager : MonoBehaviour
         CurrentActionDeck = new List<ActionCard>();
 
         //Dictionary for possible catastrophe cards
-        SuperEventCards = new Dictionary<string, SuperCard>();
+        SuperEventCards = new Dictionary<string, EventCard>();
         //List of positive event cards
         PositiveCards = new List<EventCard>();
 
@@ -546,7 +699,7 @@ public class GameManager : MonoBehaviour
         //Start the game by generating the decks players will draw from
         FillMasterActionDeck();
         GenerateActionDeck();
-        FillMasterEventDeck();
+        //FillMasterEventDeck();
         GenerateEventDeck();
 
         //fill the player's hand

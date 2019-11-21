@@ -34,3 +34,32 @@ Details
 -Added setUpGame call to start method instead of individual lines
 -Changed incrementCard in SuperCard to AddSuperToDeck and changed its call line
 -Added foruth loss condition to GameEnd method
+
+11/21/2019
+Commit Message "Added new functions for checking player valid hope conditons on cards, changed the csv loading method for new sheets, and fixed numerous bugs"
+Details
+-Removed SuperCard class
+-Moved SuperCard method for adding in super negative events to main GameManager
+-Changed dictionary for SuperCards to EventCards
+-Fixed bug where super negative events would not be shuffled into deck
+-Added ability to shuffle super negative events into deck
+-Added ability to shuffle super positive events into deck
+-Rewrote method for FillMasterActionDeck to work with new spreadsheets
+-Added new collection to FillMasterActionDeck to work with one csv and two sections
+-Changed loop to account for new spacing issues
+-Fixed orientation and data selection when creating action cards
+-Added second loop for creating event cards in FillMasterActionDeck 
+-Added the ability to create super postive events from csv
+-Added the ability to create super negative events from csv
+-Commented out FillMasterEventDeck 
+-Added method to redraw the player's hand, ReDrawHand
+-Added method to check if player has any valid hope cards in their hand before turn
+-Added loss condition if the player does not have enough money to re draw their hand and has no valid hope cards
+-Added checks to BeginTurn Method that check for player's hope cards in method
+-Added check if they have momentum active to ignore hope requirements for that turn
+-Added ability to redraw hand during turn
+-Added ability to forfeit if does not want to redraw hand
+-Added messages for if the player must redraw or forfeit their hand
+-Added cards csv to the resources asset
+
+
