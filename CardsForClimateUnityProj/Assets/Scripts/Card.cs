@@ -11,6 +11,8 @@ public class Card : MonoBehaviour
     public string cardName;
     public string cardDesc;
     public int hope;
+    public Sprite cardImage;
+
     // Start is called before the first frame update
     void Start()
     {
