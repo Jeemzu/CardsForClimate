@@ -11,7 +11,7 @@ public class ActionCard : Card
     void Start()
     {
         //Instantiate new ActionCard/EventCard object when Draw() method is called, use getComponent to fill in individual card data fields
-        this.getComponent(TextMesh).Text = gm.CurrentActionDeck[0].cardName;
+        //this.getComponent(TextMesh).Text = gm.CurrentActionDeck[0].cardName;
     }
 
     // Update is called once per frame
