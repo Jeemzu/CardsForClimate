@@ -4,6 +4,20 @@ This is a card game intended to make players more aware of the very serious issu
 
 Hope you enjoy!
 
+## Getting Started
+
+To start working on this project, you'll need to do the following:
+
+1. Clone this repository [[help](https://help.github.com/en/github/creating-cloning-and-archiving-repositories/cloning-a-repository)]
+1. Download and install Unity Hub [[help](https://docs.unity3d.com/Manual/GettingStartedInstallingUnity.html)]
+1. Open the project in Unity (all files are in the `CardsForClimateUnityProj` folder) [[help](https://docs.unity3d.com/Manual/GettingStartedOpeningProjects.html)]
+
+With that, you're good to start developing!
+
+To get yourself oriented, a good place to start (as of March 2020) is the Game Manager file (`CardsForClimateUnityProj/Assets/Scripts/GameManager.cs`).
+
+Happy buidling!
+
 ## Game Mechanics Questions
 
 _Pulled from meeting notes_
