@@ -4,6 +4,12 @@ This is a card game intended to make players more aware of the very serious issu
 
 Hope you enjoy!
 
+---
+
+## Contributing
+
+Check out the [CONTRIBUTING](CONTRIBUTING.md) guide to learn more about how we work together on this project.
+
 ## Getting Started
 
 To start working on this project, you'll need to do the following:
