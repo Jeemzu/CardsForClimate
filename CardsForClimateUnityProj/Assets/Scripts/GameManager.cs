@@ -55,6 +55,14 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public int negativeHope { get; private set; } = 0;
 
+    public static GameManager Instance;
+
+    private void Awake()
+    {
+        if (Instance != null) Debug.LogError("More than one GameManager present in the scene");
+        Instance = this;
+    }
+
     /// <summary>
     /// Called when this script first becomes active
     /// </summary>
@@ -125,7 +133,7 @@ public class GameManager : MonoBehaviour
         GenerateEventDeck();
 
         //fill the player's hand
-        DrawCard();
+        DrawCards();
     }
 
     /// <summary>
@@ -244,7 +252,20 @@ public class GameManager : MonoBehaviour
             //Call begin turn to intialize event card
             BeginTurn();
         }
-        PlayCard();
+        //Check which key is pressed to determine the card number played, if any
+        if (Input.GetKeyDown(KeyCode.Alpha1)) UseCardNumber(1);
+        else if (Input.GetKeyDown(KeyCode.Alpha2)) UseCardNumber(2);
+        else if (Input.GetKeyDown(KeyCode.Alpha3)) UseCardNumber(3);
+        else if (Input.GetKeyDown(KeyCode.Alpha4)) UseCardNumber(4);
+        else if (Input.GetKeyDown(KeyCode.Alpha5)) UseCardNumber(5);
+        else if (!PlayerCardsHope() && Input.GetKeyDown(KeyCode.Alpha6)) ReDrawHand();
+        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            //Forfeit the game
+            turnActive = false;
+            EndTurn();
+            Debug.Log("You forfeit");
+        }
     }
 
     /// <summary>
@@ -288,6 +309,7 @@ public class GameManager : MonoBehaviour
         turnActive = true;
         if (PlayerCardsHope())
         {
+            HandManager.Instance.SetCardDisplays(PlayerHand);
             PrintPlayerHand();
         } else
         {
@@ -313,82 +335,53 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void PlayCard()
     {
-        if (turnActive)
+        if (turnActive && PlayerCardsHope())
         {
-            if (PlayerCardsHope())
+            // If this turn has a negative hope event card then 
+            // it will check if the card played has a valid hope value 
+            // to be played and if the position is a valid one to check
+            if (validPos && !hopeValid)
             {
-                if (activePlayerCardCount == 0 || (activePlayerCardCount < 3 && hasMomemtum))
-                {
-                    //Check which key is pressed to determine the card number played
-                    if (Input.GetKeyDown(KeyCode.Alpha1)) UseCardNumber(1);
-                    else if (Input.GetKeyDown(KeyCode.Alpha2)) UseCardNumber(2);
-                    else if (Input.GetKeyDown(KeyCode.Alpha3)) UseCardNumber(3);
-                    else if (Input.GetKeyDown(KeyCode.Alpha4)) UseCardNumber(4);
-                    else if (Input.GetKeyDown(KeyCode.Alpha5)) UseCardNumber(5);
-                    else return; // player didn't use a card. we're finished here
+                ValidCard(currentCard);
+            }
 
-                    // If this turn has a negative hope event card then 
-                    // it will check if the card played has a valid hope value 
-                    // to be played and if the position is a valid one to check
-                    if (validPos && !hopeValid)
-                    {
-                        ValidHopeCard(currentCard);
-                    }
-
-                    // Either the card has passed the appropriate hope checks to be played or 
-                    // the player currently has momentum then check what card was played and 
-                    // if the position is a valid one to check
-                    if (validPos && (hopeValid || hasMomemtum))
-                    {
-                        //Display the name of the card the player has played
-                        Debug.Log("Card played Name: " + currentCard.cardName + 
-                            " Description: " + currentCard.cardDesc + 
-                            " Money: " + currentCard.costMoney + 
-                            " CO2:" + currentCard.costCarbon + 
-                            " Hope:" + currentCard.hope + 
-                            " Momentum:" + currentCard.momentum);
-                        //Add that card to the activePlayedCards array for stat checking after turn completion
-                        activePlayerCards[activePlayerCardCount] = currentCard;
-                        //Increment the activePlayerCardCount
-                        activePlayerCardCount++;
-                        PlayerHand.RemoveAt(currentCardIndex);
-
-                        Debug.Log("Playerhand count = " + PlayerHand.Count);
-
-                        //Check if the card has momentum
-                        if (currentCard.momentum == 0 || activePlayerCardCount == 3)
-                        {
-                            // if the card does not have momentum or 
-                            // if the max number of allowed cards to be played is reached then end the turn
-                            turnActive = false;
-                            EndTurn();
-                        }
-                        else
-                        {
-                            //Update has momentum bool
-                            hasMomemtum = true;
-                            //Display updated hand and message
-                            Debug.Log("Card played has momentum, play another card!");
-                            PrintPlayerHand();
-                        }
-                    }
-                }
-            } else
+            // Either the card has passed the appropriate hope checks to be played or 
+            // the player currently has momentum then check what card was played and 
+            // if the position is a valid one to check
+            if (validPos && (hopeValid || hasMomemtum))
             {
-                //Redraw hand
-                if (Input.GetKeyDown(KeyCode.Alpha6))
+                //Display the name of the card the player has played
+                Debug.Log("Card played Name: " + currentCard.cardName +
+                    " Description: " + currentCard.cardDesc +
+                    " Money: " + currentCard.costMoney +
+                    " CO2:" + currentCard.costCarbon +
+                    " Hope:" + currentCard.hope +
+                    " Momentum:" + currentCard.momentum);
+                //Add that card to the activePlayedCards array for stat checking after turn completion
+                activePlayerCards[activePlayerCardCount] = currentCard;
+                //Increment the activePlayerCardCount
+                activePlayerCardCount++;
+                PlayerHand.RemoveAt(currentCardIndex);
+                //HandManager.Instance.SetCardDisplays(PlayerHand);
+                Debug.Log("Playerhand count = " + PlayerHand.Count);
+
+                //Check if the card has momentum
+                if (currentCard.momentum == 0 || activePlayerCardCount == 3)
                 {
-                    ReDrawHand();
-                }
-                //Forfeit the game
-                else if (Input.GetKeyDown(KeyCode.Alpha0))
-                {
+                    // if the card does not have momentum or 
+                    // if the max number of allowed cards to be played is reached then end the turn
                     turnActive = false;
                     EndTurn();
-                    Debug.Log("You forfeit");
+                } else
+                {
+                    //Update has momentum bool
+                    hasMomemtum = true;
+                    //Display updated hand and message
+                    Debug.Log("Card played has momentum, play another card!");
+                    PrintPlayerHand();
                 }
             }
-        }                      
+        }
     }
 
     /// <summary>
@@ -403,6 +396,7 @@ public class GameManager : MonoBehaviour
             currentCard = PlayerHand[cardNum - 1];
             currentCardIndex = cardNum - 1;
             validPos = true;
+            PlayCard();
         } else
         {
             //No card is in this position of the hand display a message and redisplay hand
@@ -410,6 +404,22 @@ public class GameManager : MonoBehaviour
             PrintPlayerHand();
             //This position is not valid
             validPos = false;
+        }
+    }
+
+    /// <summary>
+    /// Called by a UI card displayer when the player signals they want to use that card.
+    /// </summary>
+    public void UseCardByUI(ActionCard card)
+    {
+        if (!turnActive) return;
+        else
+        {
+            Debug.Log("Used card " + card.cardName);
+            currentCard = card;
+            currentCardIndex = PlayerHand.IndexOf(card);
+            validPos = true;
+            PlayCard();
         }
     }
 
@@ -456,6 +466,7 @@ public class GameManager : MonoBehaviour
         {
             activePlayerCards[j] = null;
         }
+        CardCatcher.Instance.ClearCaughtCards();
         //reset counter
         activePlayerCardCount = 0;
         //reset values
@@ -471,7 +482,7 @@ public class GameManager : MonoBehaviour
         currentCard = null;
         currentCardIndex = 0;
         //Replenish player hand
-        DrawCard();
+        DrawCards();
 
         //Check the game loss conditions
         GameEnd();
@@ -480,7 +491,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// Draw cards to replenish the player's hand until it's full
     /// </summary>
-    public void DrawCard()
+    public void DrawCards()
     {
         do
         {
@@ -511,11 +522,12 @@ public class GameManager : MonoBehaviour
         } while (PlayerHand.Count > 0);
 
         //Redraw he player hand
-        DrawCard();
+        DrawCards();
 
         //Display new playerhand
         if (PlayerCardsHope())
         {
+            HandManager.Instance.SetCardDisplays(PlayerHand);
             PrintPlayerHand();
         }
         else
@@ -584,18 +596,20 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the played card has either a positive or negative hope value that would allow it to be played.
-    /// Used when the event card requires hope.
+    /// Checks if the played card will work given whatever hope constraints are placed by the event card.
     /// </summary>
     /// <param name="playedCard"></param>
-    public void ValidHopeCard(ActionCard playedCard)
+    public bool ValidCard(ActionCard playedCard)
     {
+        if (negativeHope >= 0 | hasMomemtum) return true;
         if((playedCard.hope > 0 || playedCard.hope < 0))
         {
             hopeValid = true;
+            return true;
         } else
         {
             Debug.Log("A positive hope card must be played, that card is not valid try again");
+            return false;
         }
     }
     
