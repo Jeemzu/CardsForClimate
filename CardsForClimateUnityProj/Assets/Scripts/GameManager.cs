@@ -362,7 +362,6 @@ public class GameManager : MonoBehaviour
                 //Increment the activePlayerCardCount
                 activePlayerCardCount++;
                 PlayerHand.RemoveAt(currentCardIndex);
-                //HandManager.Instance.SetCardDisplays(PlayerHand);
                 Debug.Log("Playerhand count = " + PlayerHand.Count);
 
                 //Check if the card has momentum

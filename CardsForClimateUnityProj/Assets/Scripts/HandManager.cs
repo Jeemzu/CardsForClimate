@@ -14,6 +14,10 @@ public class HandManager : MonoBehaviour
     /// The index of the card that is currently fully visible
     /// </summary>
     public int ActiveCardIndex = 2;
+
+    /// <summary>
+    /// Holds the UI objects that display action card data.
+    /// </summary>
     private List<ActionCardDisplay> cardDisplayers = new List<ActionCardDisplay>();
 
     private void Awake()
@@ -43,7 +47,7 @@ public class HandManager : MonoBehaviour
         for (int i = 0; i < cardDisplayers.Count; i++)
         {
             if (handCards.Count <= i)
-            {
+            { // if we run out of card data to put on the card displayers, we start turning off any extra card displayers
                 cardDisplayers[i].gameObject.SetActive(false);
             } else
             {
