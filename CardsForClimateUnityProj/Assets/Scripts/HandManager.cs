@@ -76,7 +76,7 @@ public class HandManager : MonoBehaviour
         for (int i = 0; i < cardDisplayers.Count; i++)
         {
             int difference = 
-                Mathf.Abs(ActiveCardIndex - cardDisplayers[i].GetComponent<ActionCardDisplay>().DisplayCardIndex);
+                Mathf.Abs(ActiveCardIndex - cardDisplayers[i].DisplayCardIndex);
             cardDiffs.Add(new KeyValuePair<ActionCardDisplay, int>(cardDisplayers[i], difference));
         }
         // Sort cards based on their differences from the active card, then set their display order appropriately
