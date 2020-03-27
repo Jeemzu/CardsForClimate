@@ -289,6 +289,8 @@ public class GameManager : MonoBehaviour
             " | CO2: " + activeEventCard.costCarbon + 
             " | Hope: " + activeEventCard.hope);
 
+        EventCardDisplay.Instance.SetCardAndDisplay(activeEventCard);
+
         //Update Money, Carbon and Hope
         Money += activeEventCard.costMoney;
         Carbon += activeEventCard.costCarbon;
