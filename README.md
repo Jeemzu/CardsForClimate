@@ -6,6 +6,10 @@ Hope you enjoy!
 
 ---
 
+## Resources
+
+- [List of Cards](https://docs.google.com/spreadsheets/d/1jZSGPYr4IXfvTKF-ufFWVQosDYh2DKbHl6gTqsAfanA/edit?ts=5e7e1747#gid=173452736)
+
 ## Contributing
 
 Check out the [CONTRIBUTING](CONTRIBUTING.md) guide to learn more about how we work together on this project.
