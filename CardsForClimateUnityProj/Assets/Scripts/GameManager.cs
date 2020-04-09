@@ -1,11 +1,34 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public int Money { get; set; }
-    public int Carbon { get; set; }
+    private int money;
+    /// <summary>
+    /// Capital-M Money is a property that controls access to and updating of lowercase-m money, the backing value
+    /// </summary>
+    public int Money {
+        get { return money; }
+        set { // Makes sure we set the slider UI value whenever Money is updated
+            money = value;
+            MoneySlider.value = value;
+        }
+    }
+
+    private int carbon;
+    /// <summary>
+    /// Capital-C Carbon is a property that controls access to and updating of lowercase-c carbon, the backing value
+    /// </summary>
+    public int Carbon {
+        get { return carbon; }
+        set { // Makes sure we set the slider UI value whenever Carbon is updated
+            carbon = value;
+            CarbonSlider.value = value;
+        }
+    }
+
     public int Momentum { get; set; }
     public int HopeKill { get; set; }
 
@@ -56,6 +79,10 @@ public class GameManager : MonoBehaviour
     public int negativeHope { get; private set; } = 0;
 
     public static GameManager Instance;
+
+    [Header("Game UI Attributes")]
+    public Slider MoneySlider;
+    public Slider CarbonSlider;
 
     private void Awake()
     {
