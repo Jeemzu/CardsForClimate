@@ -32,14 +32,6 @@ public class GameManager : MonoBehaviour
     public int Momentum { get; set; }
     public int HopeKill { get; set; }
 
-    //Reference list of cards for queues to pull from
-    public List<EventCard> MasterEventDeckRef { get; private set; }
-    public List<ActionCard> MasterActionDeckRef { get; private set; }
-
-    //Separate reference decks for super events
-    public List<EventCard> MasterSuperBadEventDeckRef { get; private set; }
-    public List<EventCard> MasterSuperGoodEventDeckRef { get; private set; }
-
     //Current cards in player's hand and previously played cards
     public List<ActionCard> PlayerHand { get; private set; }
     public List<Card> PlayedCards { get; private set; }
@@ -47,11 +39,6 @@ public class GameManager : MonoBehaviour
     //Keeps track of what cards come next from the decks, receives data from master lists
     public List<EventCard> CurrentEventDeck { get; private set; }
     public List<ActionCard> CurrentActionDeck { get; private set; }
-
-    //Dictionary for possible catastrophe cards
-    public Dictionary<string, EventCard> SuperEventCards { get; private set; }
-    //List of positive event cards
-    public List<EventCard> PositiveCards { get; private set; }
 
     //Active event card
     public EventCard activeEventCard;
@@ -89,31 +76,12 @@ public class GameManager : MonoBehaviour
         if (Instance != null) Debug.LogError("More than one GameManager present in the scene");
         Instance = this;
     }
-
-    /// <summary>
-    /// Called when this script first becomes active
-    /// </summary>
-    void Start()
-    {
-        SetupGame();
-
-        Debug.Log("Cards For Climate!");
-        Debug.Log("Press P to start your turn and advance further");
-    }
     
     /// <summary>
     /// Sets up the game by generating all decks and reseting default values
     /// </summary>
     public void SetupGame()
     {
-        //Reference list of cards for queues to pull from
-        MasterEventDeckRef = new List<EventCard>();
-        MasterActionDeckRef = new List<ActionCard>();
-
-        //Separate reference decks for super events
-        MasterSuperBadEventDeckRef = new List<EventCard>();
-        MasterSuperGoodEventDeckRef = new List<EventCard>();
-
         //Current cards in player's hand and previously played cards
         PlayerHand = new List<ActionCard>();
         PlayedCards = new List<Card>();
@@ -121,11 +89,6 @@ public class GameManager : MonoBehaviour
         //Keeps track of what cards come next from the decks, receives data from master lists
         CurrentEventDeck = new List<EventCard>();
         CurrentActionDeck = new List<ActionCard>();
-
-        //Dictionary for possible catastrophe cards
-        SuperEventCards = new Dictionary<string, EventCard>();
-        //List of positive event cards
-        PositiveCards = new List<EventCard>();
 
         //Active event card
         activeEventCard = null;
@@ -155,85 +118,14 @@ public class GameManager : MonoBehaviour
         Carbon = 20;
 
         //Start the game by generating the decks players will draw from
-        FillMasterActionDeck();
         GenerateActionDeck();
         GenerateEventDeck();
 
         //fill the player's hand
         DrawCards();
-    }
 
-    /// <summary>
-    /// Gets the entire list of action cards from a resource file into a list of ActionCard objects
-    /// </summary>
-    public void FillMasterActionDeck()
-    {
-        //Create text asset for the csv file
-        TextAsset cardData = Resources.Load<TextAsset>("Cards");
-        string[] splitDecks = cardData.text.Split(new string[] { "EventCardSection" }, System.StringSplitOptions.None);
-        //split the cards into different areas based on lines
-        string[] dataAction = splitDecks[0].Split(new char[] { '\n' });
-        //Loop through card data for action cards
-        for (int i = 2; i < dataAction.Length - 1; i++)
-        {
-
-            //split the whole data array into indiviual columns from the row
-            string[] row = dataAction[i].Split(new char[] { '|' });
-
-            //Temp action card for creation
-            ActionCard aCard = new ActionCard();
-            int.TryParse(row[0], out aCard.cardNumber);
-            aCard.cardName = row[1];
-            aCard.cardDesc = row[2];
-            int.TryParse(row[3], out aCard.costCarbon);
-            int.TryParse(row[4], out aCard.costMoney);
-            int.TryParse(row[5], out aCard.hope);
-            int.TryParse(row[6], out aCard.momentum);
-            MasterActionDeckRef.Add(aCard);
-        }
-        string[] dataEvent = splitDecks[1].Split(new char[] { '\n' });
-        //Loop through card data
-        for (int k = 1; k < dataEvent.Length; k++)
-        {
-            //split the whole data array into indiviual columns from the row
-            string[] row = dataEvent[k].Split(new char[] { '|' });
-            //Temp action card for creation
-            EventCard eCard = new EventCard();
-            int.TryParse(row[0], out eCard.cardNumber);
-            eCard.cardName = row[1];
-            eCard.cardDesc = row[2];
-            int.TryParse(row[3], out eCard.costCarbon);
-            int.TryParse(row[4], out eCard.costMoney);
-            int.TryParse(row[5], out eCard.hope);
-            int.TryParse(row[6], out eCard.momentum);
-
-            //Temp int for checking super positive event
-            int superPosEventInt = 0;
-            int.TryParse(row[7], out superPosEventInt);
-            //Temp int for checking super negative event
-            int superNegEventInt = 0;
-            int.TryParse(row[9], out superNegEventInt);
-
-            //Check which deck to add it into
-            //Check if the card is marked as a super positive event
-            if (superPosEventInt == 1)
-            {
-                //If the card is super positive then sort it into that deck
-                PositiveCards.Add(eCard);
-
-                //Check if the card is marked as a super negative event
-            } else if (superNegEventInt == 1)
-            {
-                //if the card is marked as super negative that add it to the dictionary with respective counter card                
-                SuperEventCards.Add(row[8], eCard);
-
-
-                //Else add the card to normal event deck
-            } else
-            {
-                MasterEventDeckRef.Add(eCard);
-            }
-        }
+        Debug.Log("Cards For Climate!");
+        Debug.Log("Press P to start your turn and advance further");
     }
 
     /// <summary>
@@ -244,12 +136,12 @@ public class GameManager : MonoBehaviour
         do
         {
             //Generate random number to choose a card from master queue
-            int ranNum = Random.Range(0, MasterActionDeckRef.Count);
+            int ranNum = Random.Range(0, CardDataCompiler.Instance.MasterActionDeck.Count);
             //Add chosen card to queue of action deck that player draws from
-            CurrentActionDeck.Add(MasterActionDeckRef[ranNum]);
+            CurrentActionDeck.Add(CardDataCompiler.Instance.MasterActionDeck[ranNum]);
             //Remove added card from master queue to avoid duplicates
-            MasterActionDeckRef.RemoveAt(ranNum);
-        } while (MasterActionDeckRef.Count > 0);
+            CardDataCompiler.Instance.MasterActionDeck.RemoveAt(ranNum);
+        } while (CardDataCompiler.Instance.MasterActionDeck.Count > 0);
     }
 
     /// <summary>
@@ -260,12 +152,12 @@ public class GameManager : MonoBehaviour
         do
         {
             //Generate random number to choose a card from master queue
-            int ranNum = Random.Range(0, MasterEventDeckRef.Count);
+            int ranNum = Random.Range(0, CardDataCompiler.Instance.MasterEventDeck.Count);
             //Add chosen card to queue of action deck that player draws from
-            CurrentEventDeck.Add(MasterEventDeckRef[ranNum]);
+            CurrentEventDeck.Add(CardDataCompiler.Instance.MasterEventDeck[ranNum]);
             //Remove added card from master queue to avoid duplicates
-            MasterEventDeckRef.RemoveAt(ranNum);
-        } while (MasterEventDeckRef.Count > 0);
+            CardDataCompiler.Instance.MasterEventDeck.RemoveAt(ranNum);
+        } while (CardDataCompiler.Instance.MasterEventDeck.Count > 0);
     }
 
     /// <summary>
@@ -460,10 +352,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("Turn Ended");
         
         //Check if the card has a super event card
-        if (SuperEventCards.ContainsKey(activeEventCard.cardName))
+        if (CardDataCompiler.Instance.SuperNegativeEventCards.ContainsKey(activeEventCard.cardName))
         {
             //Increment the cards supercastrophe potential
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), SuperEventCards[activeEventCard.cardName]);
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+                CardDataCompiler.Instance.SuperNegativeEventCards[activeEventCard.cardName]);
         }
 
         
@@ -484,9 +377,11 @@ public class GameManager : MonoBehaviour
             negativeHope = 0;
         }
         //check momentum for super positive event and if there are remaining super positive cards to be played
-        if(activePlayerCardCount >= 3 && PositiveCards.Count > 0)
+        if(activePlayerCardCount >= 3 && CardDataCompiler.Instance.PositiveEventCards.Count > 0)
         {
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), PositiveCards[Random.Range(0, PositiveCards.Count)]);
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+                CardDataCompiler.Instance.PositiveEventCards[
+                    Random.Range(0, CardDataCompiler.Instance.PositiveEventCards.Count)]);
         }
 
         //Clear activeplayercards and reset counter
@@ -532,8 +427,6 @@ public class GameManager : MonoBehaviour
             PlayerHand.Add(CurrentActionDeck[0]);
             CurrentActionDeck.RemoveAt(0);            
         } while (PlayerHand.Count < 5);
-
-        
     }
 
     /// <summary>
@@ -603,22 +496,14 @@ public class GameManager : MonoBehaviour
     public bool PlayerCardsHope()
     {
         //Check if hope is an issue first
-        if(negativeHope >= 0 || hasMomemtum)
-        {
-            return true;
-        }
+        if(negativeHope >= 0 || hasMomemtum) return true;
         
         //Loop through player hand
         for(int i = 0; i < PlayerHand.Count; i++)
         {
             //If any card in the player's hand has a hope value then return true
-            if(PlayerHand[i].hope != 0)
-            {
-                return true;
-            }
+            if(PlayerHand[i].hope != 0) return true;
         }
-        
-
         //If no card was found and hope is negative then return false
         return false;
     }
@@ -630,6 +515,7 @@ public class GameManager : MonoBehaviour
     public bool ValidCard(ActionCard playedCard)
     {
         if (negativeHope >= 0 | hasMomemtum) return true;
+
         if((playedCard.hope > 0 || playedCard.hope < 0))
         {
             hopeValid = true;
