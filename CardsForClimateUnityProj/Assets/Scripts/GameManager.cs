@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
         hopeValid = true;
         //Boolean for if momentum is active
         hasMomentum = false;
+        MomentumDisplay.Instance.SetMomentumEmpty();
         //Boolean for if slot is a valid slot
         validPos = true;
         //Boolean for game lost status
@@ -305,11 +306,25 @@ public class GameManager : MonoBehaviour
                     // if the card does not have momentum or
                     // if the max number of allowed cards to be played is reached then end the turn
                     TurnActive = false;
+                    MomentumDisplay.Instance.SetMomentumEmpty();
                     EndTurn();
                 } else
                 {
                     //Update has momentum bool
                     hasMomentum = true;
+                    switch (activePlayerCardCount)
+                    {
+                        case 0:
+                            MomentumDisplay.Instance.SetMomentumFull();
+                            break;
+                        case 1:
+                            MomentumDisplay.Instance.SetMomentumTwo();
+                            break;
+                        case 2:
+                            MomentumDisplay.Instance.SetMomentumOne();
+                            break;
+                    }
+
                     //Display updated hand and message
                     Debug.Log("Card played has momentum, play another card!");
                     PrintPlayerHand();
