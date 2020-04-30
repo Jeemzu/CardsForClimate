@@ -228,11 +228,11 @@ public class GameManager : MonoBehaviour
             hopeValid = false;
         }
         turnActive = true;
-        if (PlayerCardsHope())
-        {
-            HandManager.Instance.SetCardDisplays(PlayerHand);
-            PrintPlayerHand();
-        } else
+
+        HandManager.Instance.SetCardDisplays(PlayerHand);
+        PrintPlayerHand();
+
+        if (!PlayerCardsHope())
         {
             //Display message based on if the player has enough money for redraw
             if (Money >= 5)
@@ -271,34 +271,55 @@ public class GameManager : MonoBehaviour
             // if the position is a valid one to check
             if (validPos && (hopeValid || hasMomemtum))
             {
-                //Display the name of the card the player has played
-                Debug.Log("Card played Name: " + currentCard.cardName +
+                //If this is a momentum run, make sure the card played has momentum
+                if ((hasMomemtum && currentCard.momentum > 0) || !hasMomemtum)
+                {
+                    //Display the name of the card the player has played
+                    Debug.Log("Card played Name: " + currentCard.cardName +
                     " Description: " + currentCard.cardDesc +
                     " Money: " + currentCard.costMoney +
                     " CO2:" + currentCard.costCarbon +
                     " Hope:" + currentCard.hope +
                     " Momentum:" + currentCard.momentum);
-                //Add that card to the activePlayedCards array for stat checking after turn completion
-                activePlayerCards[activePlayerCardCount] = currentCard;
-                //Increment the activePlayerCardCount
-                activePlayerCardCount++;
-                PlayerHand.RemoveAt(currentCardIndex);
-                Debug.Log("Playerhand count = " + PlayerHand.Count);
+                    //Add that card to the activePlayedCards array for stat checking after turn completion
+                    activePlayerCards[activePlayerCardCount] = currentCard;
+                    //Increment the activePlayerCardCount
+                    activePlayerCardCount++;
+                    PlayerHand.RemoveAt(currentCardIndex);
+                    Debug.Log("Playerhand count = " + PlayerHand.Count);
 
-                //Check if the card has momentum
-                if (currentCard.momentum == 0 || activePlayerCardCount == 3)
+
+                    //Check if end of turn
+                    if (currentCard.momentum == 0 || activePlayerCardCount == 3)
+                    {
+                        // if the card does not have momentum or
+                        // if the max number of allowed cards to be played is reached then end the turn
+                        turnActive = false;
+                        EndTurn();
+                    }
+                    //Card played has momentum
+                    else
+                    {
+                        hasMomemtum = true;
+
+                        //If player has no other momentum cards to play, end turn
+                        if (!PlayerCardsMomentum())
+                        {
+                            Debug.Log("Out of momentum cards to play");
+                            turnActive = false;
+                            EndTurn();
+                        }
+                        else
+                        {
+                            //Display updated hand and message
+                            Debug.Log("Card played has momentum, play another card with momentum!");
+                            PrintPlayerHand();
+                        }
+                    }
+                }
+                else
                 {
-                    // if the card does not have momentum or 
-                    // if the max number of allowed cards to be played is reached then end the turn
-                    turnActive = false;
-                    EndTurn();
-                } else
-                {
-                    //Update has momentum bool
-                    hasMomemtum = true;
-                    //Display updated hand and message
-                    Debug.Log("Card played has momentum, play another card!");
-                    PrintPlayerHand();
+                    Debug.Log("Card played must have momentum during a momentum run.");
                 }
             }
         }
@@ -505,6 +526,24 @@ public class GameManager : MonoBehaviour
             if(PlayerHand[i].hope != 0) return true;
         }
         //If no card was found and hope is negative then return false
+        return false;
+    }
+
+    /// <summary>
+    /// Checks if any card in the player's hand has momentum
+    /// </summary>
+    public bool PlayerCardsMomentum()
+    {
+        //Check if it is a momentum run
+        if (hasMomemtum == false) return true;
+
+        //Loop through player hand
+        for(int i = 0; i < PlayerHand.Count; i++)
+        {
+            // If any card in the player's hand has momentum, return true
+            if (PlayerHand[i].momentum != 0) return true;
+        }
+        //If no card was found and momentum is true, return false
         return false;
     }
 
