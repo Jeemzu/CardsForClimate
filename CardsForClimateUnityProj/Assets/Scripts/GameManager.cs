@@ -232,6 +232,7 @@ public class GameManager : MonoBehaviour
         HandManager.Instance.SetCardDisplays(PlayerHand);
         PrintPlayerHand();
 
+        //There are no valid hope cards in hand
         if (!PlayerCardsHope())
         {
             //Display message based on if the player has enough money for redraw
