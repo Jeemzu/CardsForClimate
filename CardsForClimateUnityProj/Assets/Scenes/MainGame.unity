@@ -2685,6 +2685,7 @@ GameObject:
   - component: {fileID: 840318488}
   - component: {fileID: 840318490}
   - component: {fileID: 840318489}
+  - component: {fileID: 840318491}
   m_Layer: 5
   m_Name: Hope_Icon
   m_TagString: Untagged
@@ -2747,6 +2748,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 840318487}
   m_CullTransparentMesh: 0
+--- !u!114 &840318491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840318487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bac9cf819a824a3cb79c4b6c298cfc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  EmptyHopeIcon: {fileID: 21300000, guid: 6feb78615a0584f19947128f17a48bb4, type: 3}
+  OneHopeIcon: {fileID: 21300000, guid: 2bb680819014e485ab714af047858c43, type: 3}
+  TwoHopeIcon: {fileID: 21300000, guid: 49ce9408c8c8748a28287545bf793926, type: 3}
+  FullHopeIcon: {fileID: 21300000, guid: b2dba1adf2923f84391e993604a7d01e, type: 3}
 --- !u!1 &971217180
 GameObject:
   m_ObjectHideFlags: 0
