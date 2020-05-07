@@ -86,7 +86,7 @@ public class CardDataCompiler : MonoBehaviour
     {
         string url = "https://docs.google.com/spreadsheets/d/" + docId + "/export?format=csv";
         if (!string.IsNullOrEmpty(sheetId)) url += "&gid=" + sheetId;
-        
+        Debug.Log("Downloading spreadsheet...");
         using (UnityWebRequest downloadRequest = UnityWebRequest.Get(url))
         {
             yield return downloadRequest.SendWebRequest();
@@ -96,6 +96,7 @@ public class CardDataCompiler : MonoBehaviour
                 Debug.Log("Error downloading: " + downloadRequest.error);
             } else
             {
+                Debug.Log("Spreadsheet downloaded!");
                 callback(downloadRequest.downloadHandler.text);
                 if (saveAsset)
                 {
@@ -195,6 +196,12 @@ public class CardDataCompiler : MonoBehaviour
             int.TryParse(line[7], out thisCard.costMoney);
             int.TryParse(line[8], out thisCard.hope);
             int.TryParse(line[9], out thisCard.momentum);
+
+            // Load card image from the corresponding file path for that image
+            // e.g., "ActionCards/2-Choose Public Transport"
+            thisCard.cardImage = Resources.Load<Sprite>(
+                (line[1].ToLower() == "action" ? "ActionCards" : "EventCards") 
+                + "/" + thisCard.cardNumber.ToString() + "-" + thisCard.cardName);
         }
 
         Debug.Log("Done loading CSV!");
