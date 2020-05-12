@@ -181,6 +181,7 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             //Forfeit the game
+            gameOver = true;
             turnActive = false;
             EndTurn();
             Debug.Log("You forfeit");
@@ -409,6 +410,12 @@ public class GameManager : MonoBehaviour
 
         //Check the game loss conditions
         GameEnd();
+
+        //If game is not over, begin next turn
+        if (!gameOver)
+        {
+            BeginTurn();
+        }
     }
 
     /// <summary>
@@ -442,7 +449,7 @@ public class GameManager : MonoBehaviour
             PlayerHand.RemoveAt(0);
         } while (PlayerHand.Count > 0);
 
-        //Redraw he player hand
+        //Redraw the player hand
         DrawCards();
 
         //Display new playerhand
