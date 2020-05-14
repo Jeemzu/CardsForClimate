@@ -44,13 +44,16 @@ public class HandManager : MonoBehaviour
     /// <param name="handCards">The actual data objects for the cards in the player's hand</param>
     public void SetCardDisplays(List<ActionCard> handCards)
     {
+        //Debug.Log("How many cards we gon set pals? " + handCards.Count);
         for (int i = 0; i < cardDisplayers.Count; i++)
         {
             if (handCards.Count <= i)
             { // if we run out of card data to put on the card displayers, we start turning off any extra card displayers
+                //Debug.Log("Setting card " + (i+1) + " unviewable");
                 cardDisplayers[i].gameObject.SetActive(false);
             } else
             {
+                //Debug.Log("Setting card " + (i+1) + " viewable");
                 cardDisplayers[i].gameObject.SetActive(true);
                 cardDisplayers[i].SetCardAndDisplay(handCards[i]);
             }
