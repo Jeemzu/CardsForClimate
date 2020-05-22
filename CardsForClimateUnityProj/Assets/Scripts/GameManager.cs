@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Money is updated
             money = value;
             MoneySlider.value = value;
+            if (money <= 0) GameEnd();
         }
     }
 
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Carbon is updated
             carbon = value;
             CarbonSlider.value = value;
+            if (carbon >= 30) GameEnd();
         }
     }
 
