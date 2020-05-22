@@ -96,6 +96,7 @@ public class ActionCardDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler,
     /// </summary>
     public void OnEndDrag(PointerEventData eventData)
     {
+        int currentTurn = GameManager.Instance.CurrentTurnNumber;
         // put card back in its hand position
         transform.position = restingPos;
 
@@ -117,7 +118,12 @@ public class ActionCardDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler,
                     CardCatcher.Instance.CatchCard(this);
                     GameManager.Instance.UseCardByUI(MyCard);
                     HandManager.Instance.ScrollRandom();
-                    gameObject.SetActive(false);
+                    // only turn the card off if a new turn hasn't been started, triggered by the last card; 
+                    // otherwise this will cause issues with the hand refilling between turns.
+                    if (currentTurn == GameManager.Instance.CurrentTurnNumber)
+                    {
+                        gameObject.SetActive(false);
+                    }
                 }
                 break;
             }
