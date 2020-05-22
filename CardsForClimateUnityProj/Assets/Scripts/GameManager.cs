@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Money is updated
             money = value;
             MoneySlider.value = value;
+            if (money <= 0) GameEnd();
         }
     }
 
@@ -26,6 +27,7 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Carbon is updated
             carbon = value;
             CarbonSlider.value = value;
+            if (carbon >= 30) GameEnd();
         }
     }
 
@@ -51,8 +53,16 @@ public class GameManager : MonoBehaviour
     public ActionCard currentCard;
     private int currentCardIndex = 0;
 
-    //Boolean for if turn is currently in progress
-    public bool TurnActive { get; private set; } = false;
+    //Boolean for if turn is finished
+    private bool turnActive = false;
+    public bool TurnActive {
+        get { return turnActive; }
+        private set {
+            RedrawButton.interactable = value;
+            turnActive = value;
+        }
+    }
+    
     //Boolean for if hope requirements met
     bool hopeValid = true;
     //Boolean for if momentum is active
@@ -72,6 +82,7 @@ public class GameManager : MonoBehaviour
     [Header("Game UI Attributes")]
     public Slider MoneySlider;
     public Slider CarbonSlider;
+    public Button RedrawButton;
 
     private void Awake()
     {
@@ -181,7 +192,7 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha3)) UseCardNumber(3);
         else if (Input.GetKeyDown(KeyCode.Alpha4)) UseCardNumber(4);
         else if (Input.GetKeyDown(KeyCode.Alpha5)) UseCardNumber(5);
-        else if (!PlayerCardsHope() && Input.GetKeyDown(KeyCode.Alpha6)) ReDrawHand();
+        else if (Input.GetKeyDown(KeyCode.Alpha6)) ReDrawHand();
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             //Forfeit the game
@@ -232,7 +243,6 @@ public class GameManager : MonoBehaviour
             Debug.Log("A positive hope card must be played");
             hopeValid = false;
         }
-
         HandManager.Instance.SetCardDisplays(PlayerHand);
         PrintPlayerHand();
         if (!PlayerCardsHope() && Money >= 5)
@@ -447,39 +457,40 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ReDrawHand()
     {
-        //Take away 5 money from player
-        Money -= 5;
-        //Clear the players hand
-        do
+        if (TurnActive)
         {
-            PlayerHand.RemoveAt(0);
-        } while (PlayerHand.Count > 0);
-
-        //Redraw the player hand
-        DrawCards();
-
-        //Display new playerhand
-        if (PlayerCardsHope())
-        {
-            HandManager.Instance.SetCardDisplays(PlayerHand);
-            PrintPlayerHand();
-        }
-        else
-        {
-            //Display message based on if the player has enough money for redraw
-            if (Money >= 5)
+            //Take away 5 money from player
+            Money -= 5;
+            //Clear the players hand
+            do
             {
-                Debug.Log("There are no valid hope cards in your new hand. " +
-                    "You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
-                Debug.Log("Money: " + Money);
-            }
-            else
+                PlayerHand.RemoveAt(0);
+            } while (PlayerHand.Count > 0);
+
+            //Redraw the player hand
+            DrawCards();
+
+            //Display new playerhand
+            if (PlayerCardsHope())
             {
-                gameOver = true;
-                TurnActive = false;
-                EndTurn();
-                Debug.Log("There are no valid hope cards in your hand and " +
-                    "you do not have enough money to redraw your hand. You lose");
+                HandManager.Instance.SetCardDisplays(PlayerHand);
+                PrintPlayerHand();
+            } else
+            {
+                //Display message based on if the player has enough money for redraw
+                if (Money >= 5)
+                {
+                    Debug.Log("There are no valid hope cards in your new hand. " +
+                        "You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
+                    Debug.Log("Money: " + Money);
+                } else
+                {
+                    gameOver = true;
+                    TurnActive = false;
+                    EndTurn();
+                    Debug.Log("There are no valid hope cards in your hand and " +
+                        "you do not have enough money to redraw your hand. You lose");
+                }
             }
         }
 ;    }
