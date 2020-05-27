@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum MomentumCount {
+  Empty = 0,
+  One = 1,
+  Two = 2,
+  Full = 3
+}
+
 public class MomentumDisplay : MonoBehaviour
 {
     /// <summary>
@@ -18,6 +25,11 @@ public class MomentumDisplay : MonoBehaviour
     public Sprite TwoMomentumIcon;
     public Sprite FullMomentumIcon;
 
+    void Start()
+    {
+        displayedImage = GetComponent<Image>();
+    }
+
     private void Awake()
     {
         if (Instance != null) Debug.LogError("More than one instance of MomentumDisplay present");
@@ -25,38 +37,23 @@ public class MomentumDisplay : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the momentum icon to show full momentum.
+    /// Sets the momentum icon for the given count.
     /// </summary>
-    public void SetMomentumFull()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = FullMomentumIcon;
-    }
-
-    /// <summary>
-    /// Sets the momentum icon to show two momentum.
-    /// </summary>
-    public void SetMomentumTwo()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = TwoMomentumIcon;
-    }
-
-    /// <summary>
-    /// Sets the momentum icon to show one momentum.
-    /// </summary>
-    public void SetMomentumOne()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = OneMomentumIcon;
-    }
-
-    /// <summary>
-    /// Sets the momentum icon to show no momentum.
-    /// </summary>
-    public void SetMomentumEmpty()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = EmptyMomentumIcon;
+    public void UpdateMomentum(MomentumCount count) {
+        switch (count)
+        {
+            case MomentumCount.Empty:
+                displayedImage.sprite = EmptyMomentumIcon;
+                break;
+            case MomentumCount.One:
+                displayedImage.sprite = OneMomentumIcon;
+                break;
+            case MomentumCount.Two:
+                displayedImage.sprite = TwoMomentumIcon;
+                break;
+            case MomentumCount.Full:
+                displayedImage.sprite = FullMomentumIcon;
+                break;
+        }
     }
 }
