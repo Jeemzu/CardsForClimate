@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum HopeCount {
+  Empty = 0,
+  One = 1,
+  Two = 2,
+  Full = 3
+}
 public class HopeDisplay : MonoBehaviour
 {
     /// <summary>
@@ -18,6 +24,11 @@ public class HopeDisplay : MonoBehaviour
     public Sprite TwoHopeIcon;
     public Sprite FullHopeIcon;
 
+    void Start()
+    {
+        displayedImage = GetComponent<Image>();
+    }
+
     private void Awake()
     {
         if (Instance != null) Debug.LogError("More than one instance of HopeDisplay present");
@@ -25,38 +36,23 @@ public class HopeDisplay : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the Hope icon to show full Hope.
+    /// Sets the hope icon for the given count.
     /// </summary>
-    public void SetHopeFull()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = FullHopeIcon;
-    }
-
-    /// <summary>
-    /// Sets the Hope icon to show two Hope.
-    /// </summary>
-    public void SetHopeTwo()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = TwoHopeIcon;
-    }
-
-    /// <summary>
-    /// Sets the Hope icon to show one Hope.
-    /// </summary>
-    public void SetHopeOne()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = OneHopeIcon;
-    }
-
-    /// <summary>
-    /// Sets the Hope icon to show no Hope.
-    /// </summary>
-    public void SetHopeEmpty()
-    {
-        displayedImage = GetComponent<Image>();
-        displayedImage.sprite = EmptyHopeIcon;
+    public void UpdateHope(HopeCount count) {
+        switch (count)
+        {
+            case HopeCount.Full:
+                displayedImage.sprite = FullHopeIcon;
+                break;
+            case HopeCount.Two:
+                displayedImage.sprite = TwoHopeIcon;
+                break;
+            case HopeCount.Empty:
+                displayedImage.sprite = EmptyHopeIcon;
+                break;
+            case HopeCount.One:
+                displayedImage.sprite = OneHopeIcon;
+                break;
+        }
     }
 }

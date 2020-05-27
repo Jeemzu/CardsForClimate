@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
 
         //negative hope counter
         negativeHope = 0;
-        HopeDisplay.Instance.SetHopeFull();
+        HopeDisplay.Instance.UpdateHope(HopeCount.Full);
 
         //Money and Carbon start at 20 every game
         Money = 20;
@@ -234,15 +234,15 @@ public class GameManager : MonoBehaviour
         negativeHope += activeEventCard.hope;
 
         // Update Hope
-        if(negativeHope == -3) HopeDisplay.Instance.SetHopeEmpty();
-        else if(negativeHope == -2) HopeDisplay.Instance.SetHopeOne();
-        else if(negativeHope == -1) HopeDisplay.Instance.SetHopeTwo();
+        if(negativeHope == -3) HopeDisplay.Instance.UpdateHope(HopeCount.Empty);
+        else if(negativeHope == -2) HopeDisplay.Instance.UpdateHope(HopeCount.One);
+        else if(negativeHope == -1) HopeDisplay.Instance.UpdateHope(HopeCount.Two);
 
         //Hope can only be negative
         if(negativeHope >= 0)
         {
             negativeHope = 0;
-            HopeDisplay.Instance.SetHopeFull();
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //Display updated stats
         Debug.Log("Global Stats: Money: " + Money + " | C02: " + Carbon + " | Hope : " + negativeHope);
@@ -398,11 +398,11 @@ public class GameManager : MonoBehaviour
             negativeHope += activePlayerCards[i].hope;
         }
 
-        //Check if hope is negative
+        //Check if hope is not negative
         if(negativeHope > 0)
         {
             negativeHope = 0;
-            HopeDisplay.Instance.SetHopeFull();
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //check momentum for super positive event and if there are remaining super positive cards to be played
         if(activePlayerCardCount >= 3 && CardDataCompiler.Instance.PositiveEventCards.Count > 0)
