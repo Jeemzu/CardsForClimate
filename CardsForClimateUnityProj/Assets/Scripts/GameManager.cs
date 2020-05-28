@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     bool validPos = true;
     //Boolean for game lost status
     bool gameOver = false;
-    
+
     /// <summary>
     /// negative hope counter
     /// </summary>
@@ -89,7 +89,7 @@ public class GameManager : MonoBehaviour
         if (Instance != null) Debug.LogError("More than one GameManager present in the scene");
         Instance = this;
     }
-    
+
     /// <summary>
     /// Sets up the game by generating all decks and reseting default values
     /// </summary>
@@ -118,6 +118,7 @@ public class GameManager : MonoBehaviour
         hopeValid = true;
         //Boolean for if momentum is active
         hasMomentum = false;
+        MomentumDisplay.Instance.UpdateMomentum(MomentumCount.Empty);
         //Boolean for if slot is a valid slot
         validPos = true;
         //Boolean for game lost status
@@ -125,6 +126,7 @@ public class GameManager : MonoBehaviour
 
         //negative hope counter
         negativeHope = 0;
+        HopeDisplay.Instance.UpdateHope(HopeCount.Full);
 
         //Money and Carbon start at 20 every game
         Money = 20;
@@ -220,8 +222,8 @@ public class GameManager : MonoBehaviour
         //Display Card info
         Debug.Log("Card Event: " + activeEventCard.cardName);
         Debug.Log("Card Description: " + activeEventCard.cardDesc);
-        Debug.Log("Card Stats Money: " + activeEventCard.costMoney + 
-            " | CO2: " + activeEventCard.costCarbon + 
+        Debug.Log("Card Stats Money: " + activeEventCard.costMoney +
+            " | CO2: " + activeEventCard.costCarbon +
             " | Hope: " + activeEventCard.hope);
 
         EventCardDisplay.Instance.SetCardAndDisplay(activeEventCard);
@@ -230,10 +232,17 @@ public class GameManager : MonoBehaviour
         Money += activeEventCard.costMoney;
         Carbon += activeEventCard.costCarbon;
         negativeHope += activeEventCard.hope;
+
+        // Update Hope
+        if(negativeHope == -3) HopeDisplay.Instance.UpdateHope(HopeCount.Empty);
+        else if(negativeHope == -2) HopeDisplay.Instance.UpdateHope(HopeCount.One);
+        else if(negativeHope == -1) HopeDisplay.Instance.UpdateHope(HopeCount.Two);
+
         //Hope can only be negative
-        if(negativeHope > 0)
+        if(negativeHope >= 0)
         {
             negativeHope = 0;
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //Display updated stats
         Debug.Log("Global Stats: Money: " + Money + " | C02: " + Carbon + " | Hope : " + negativeHope);
@@ -273,16 +282,16 @@ public class GameManager : MonoBehaviour
     {
         if (TurnActive && PlayerCardsHope())
         {
-            // If this turn has a negative hope event card then 
-            // it will check if the card played has a valid hope value 
+            // If this turn has a negative hope event card then
+            // it will check if the card played has a valid hope value
             // to be played and if the position is a valid one to check
             if (validPos && !hopeValid)
             {
                 ValidCard(currentCard);
             }
 
-            // Either the card has passed the appropriate hope checks to be played or 
-            // the player currently has momentum then check what card was played and 
+            // Either the card has passed the appropriate hope checks to be played or
+            // the player currently has momentum then check what card was played and
             // if the position is a valid one to check
             if (validPos && (hopeValid || hasMomentum))
             {
@@ -302,14 +311,16 @@ public class GameManager : MonoBehaviour
                 //Check if the card has momentum
                 if (currentCard.momentum == 0 || activePlayerCardCount == 3)
                 {
-                    // if the card does not have momentum or 
+                    // if the card does not have momentum or
                     // if the max number of allowed cards to be played is reached then end the turn
                     TurnActive = false;
+                    MomentumDisplay.Instance.UpdateMomentum(MomentumCount.Empty);
                     EndTurn();
                 } else
                 {
                     //Update has momentum bool
                     hasMomentum = true;
+                    MomentumDisplay.Instance.UpdateMomentum((MomentumCount)activePlayerCardCount);
                     //Display updated hand and message
                     Debug.Log("Card played has momentum, play another card!");
                     PrintPlayerHand();
@@ -371,11 +382,11 @@ public class GameManager : MonoBehaviour
         if (CardDataCompiler.Instance.SuperNegativeEventCards.ContainsKey(activeEventCard.cardName))
         {
             //Increment the cards supercastrophe potential
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count),
                 CardDataCompiler.Instance.SuperNegativeEventCards[activeEventCard.cardName]);
         }
 
-        
+
         //Update based on player cards
         for (int i = 0; i < activePlayerCardCount; i++)
         {
@@ -387,15 +398,16 @@ public class GameManager : MonoBehaviour
             negativeHope += activePlayerCards[i].hope;
         }
 
-        //Check if hope is negative
+        //Check if hope is not negative
         if(negativeHope > 0)
         {
             negativeHope = 0;
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //check momentum for super positive event and if there are remaining super positive cards to be played
         if(activePlayerCardCount >= 3 && CardDataCompiler.Instance.PositiveEventCards.Count > 0)
         {
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count),
                 CardDataCompiler.Instance.PositiveEventCards[
                     Random.Range(0, CardDataCompiler.Instance.PositiveEventCards.Count)]);
         }
@@ -448,7 +460,7 @@ public class GameManager : MonoBehaviour
             }
             //Draw a card and add it to the player hand
             PlayerHand.Add(CurrentActionDeck[0]);
-            CurrentActionDeck.RemoveAt(0);            
+            CurrentActionDeck.RemoveAt(0);
         } while (PlayerHand.Count < 5);
     }
 
@@ -494,7 +506,7 @@ public class GameManager : MonoBehaviour
             }
         }
 ;    }
-    
+
     /// <summary>
     /// Outputs information to the log about each card the player is holding.
     /// </summary>
@@ -550,7 +562,7 @@ public class GameManager : MonoBehaviour
             return false;
         }
     }
-    
+
     /// <summary>
     /// Method for ending the game
     /// </summary>
