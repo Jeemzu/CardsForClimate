@@ -903,6 +903,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1816238216}
     m_Modifications:
+    - target: {fileID: 1731757887213300238, guid: 10bb8bb33c5ea4641819098116b9ac09,
+        type: 3}
+      propertyPath: m_Name
+      value: Carbon Slider
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731757887213300238, guid: 10bb8bb33c5ea4641819098116b9ac09,
+        type: 3}
+      propertyPath: m_Layer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 1371153031409433594, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -927,26 +937,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8956184026929743695, guid: 10bb8bb33c5ea4641819098116b9ac09,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5665683644923821594, guid: 10bb8bb33c5ea4641819098116b9ac09,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1731757887213300238, guid: 10bb8bb33c5ea4641819098116b9ac09,
-        type: 3}
-      propertyPath: m_Name
-      value: Carbon Slider
-      objectReference: {fileID: 0}
-    - target: {fileID: 1731757887213300238, guid: 10bb8bb33c5ea4641819098116b9ac09,
-        type: 3}
-      propertyPath: m_Layer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1731757887213300239, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
@@ -1061,12 +1051,22 @@ PrefabInstance:
     - target: {fileID: 1731757887213300239, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 4.232521
+      value: 4.6
       objectReference: {fileID: 0}
     - target: {fileID: 1731757887213300239, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
       propertyPath: m_LocalScale.z
       value: 1.7635499
+      objectReference: {fileID: 0}
+    - target: {fileID: 8956184026929743695, guid: 10bb8bb33c5ea4641819098116b9ac09,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5665683644923821594, guid: 10bb8bb33c5ea4641819098116b9ac09,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1731757888124190668, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
@@ -4014,11 +4014,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 1731757888294343884, guid: 10bb8bb33c5ea4641819098116b9ac09,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0.040000916
-      objectReference: {fileID: 0}
     - target: {fileID: 6198730935862812860, guid: 10bb8bb33c5ea4641819098116b9ac09,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4083,6 +4078,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1731757888294343884, guid: 10bb8bb33c5ea4641819098116b9ac09,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.040000916
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10bb8bb33c5ea4641819098116b9ac09, type: 3}
