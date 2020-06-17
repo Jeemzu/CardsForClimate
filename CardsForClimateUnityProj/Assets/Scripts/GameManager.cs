@@ -260,7 +260,7 @@ public class GameManager : MonoBehaviour
         if (turnActive && PlayerCardsHope())
         {
             // If this turn has a negative hope event card then 
-            // it will check if the card played has a valid hope value 
+            // it will check if the card played has a valid hope value
             // to be played and if the position is a valid one to check
             if (validPos && !hopeValid)
             {
@@ -549,12 +549,19 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Checks if the played card will work given whatever hope constraints are placed by the event card.
+    /// Checks if the played card will work given whatever hope and momentum constraints are placed by the event card.
     /// </summary>
     /// <param name="playedCard"></param>
     public bool ValidCard(ActionCard playedCard)
     {
-        if (negativeHope >= 0 | hasMomemtum) return true;
+        // Make sure card played is valid given momentum constraints
+        if (hasMomemtum && playedCard.momentum <= 0)
+        {
+            Debug.Log("Card played must have momentum during a momentum run.");
+            return false;
+        }
+
+        if (negativeHope >= 0) return true;
 
         if((playedCard.hope > 0 || playedCard.hope < 0))
         {
