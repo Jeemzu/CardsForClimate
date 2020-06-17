@@ -25,7 +25,8 @@ public class EventCardDisplay : MonoBehaviour
     public GameObject Money;
     public GameObject Carbon;
     public GameObject HopeIcon;
-    public GameObject CardArt;
+    // Commenting CardArt out because it isn't used in the current design, but may be used in future designs
+    //public GameObject CardArt;
 
     private void Awake()
     {
@@ -52,7 +53,7 @@ public class EventCardDisplay : MonoBehaviour
                                                 (thisCard.costMoney > 0 ? "+" : "") + thisCard.costMoney.ToString();
         Carbon.GetComponent<TextMeshProUGUI>().text =
                                                 (thisCard.costCarbon > 0 ? "+" : "") + thisCard.costCarbon.ToString();
-        CardArt.GetComponent<Image>().sprite = thisCard.cardImage;
+        //CardArt.GetComponent<Image>().sprite = thisCard.cardImage;
         HopeIcon.SetActive(thisCard.hope < 0);
     }
 
