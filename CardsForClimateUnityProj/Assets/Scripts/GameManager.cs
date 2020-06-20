@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Money is updated
             money = value;
             MoneySlider.value = value;
+            if (money <= 0) GameEnd();
         }
     }
 
@@ -26,11 +27,14 @@ public class GameManager : MonoBehaviour
         set { // Makes sure we set the slider UI value whenever Carbon is updated
             carbon = value;
             CarbonSlider.value = value;
+            if (carbon >= 30) GameEnd();
         }
     }
 
     public int Momentum { get; set; }
     public int HopeKill { get; set; }
+
+    public int CurrentTurnNumber { get; private set; } = 0;
 
     //Current cards in player's hand and previously played cards
     public List<ActionCard> PlayerHand { get; private set; }
@@ -50,16 +54,24 @@ public class GameManager : MonoBehaviour
     private int currentCardIndex = 0;
 
     //Boolean for if turn is finished
-    bool turnActive = false;
+    private bool turnActive = false;
+    public bool TurnActive {
+        get { return turnActive; }
+        private set {
+            RedrawButton.interactable = value;
+            turnActive = value;
+        }
+    }
+    
     //Boolean for if hope requirements met
     bool hopeValid = true;
     //Boolean for if momentum is active
-    bool hasMomemtum = false;
+    bool hasMomentum = false;
     //Boolean for if slot is a valid slot
     bool validPos = true;
     //Boolean for game lost status
     bool gameOver = false;
-    
+
     /// <summary>
     /// negative hope counter
     /// </summary>
@@ -70,13 +82,14 @@ public class GameManager : MonoBehaviour
     [Header("Game UI Attributes")]
     public Slider MoneySlider;
     public Slider CarbonSlider;
+    public Button RedrawButton;
 
     private void Awake()
     {
         if (Instance != null) Debug.LogError("More than one GameManager present in the scene");
         Instance = this;
     }
-    
+
     /// <summary>
     /// Sets up the game by generating all decks and reseting default values
     /// </summary>
@@ -100,11 +113,12 @@ public class GameManager : MonoBehaviour
         currentCardIndex = 0;
 
         //Boolean for if turn is finished
-        turnActive = false;
+        TurnActive = false;
         //Boolean for if hope requirements met
         hopeValid = true;
         //Boolean for if momentum is active
-        hasMomemtum = false;
+        hasMomentum = false;
+        MomentumDisplay.Instance.UpdateMomentum(MomentumCount.Empty);
         //Boolean for if slot is a valid slot
         validPos = true;
         //Boolean for game lost status
@@ -112,6 +126,7 @@ public class GameManager : MonoBehaviour
 
         //negative hope counter
         negativeHope = 0;
+        HopeDisplay.Instance.UpdateHope(HopeCount.Full);
 
         //Money and Carbon start at 20 every game
         Money = 20;
@@ -168,8 +183,10 @@ public class GameManager : MonoBehaviour
         //Testing key for turn beginning
         if (!gameOver && Input.GetKeyDown(KeyCode.P))
         {
-            //Call begin turn to intialize event card
-            BeginTurn();
+            // Call end turn (if we're not starting the game for the first time) 
+            // and begin turn to intialize event card, redraw hand, and apply active cards
+            if (CurrentTurnNumber > 0) EndTurn();
+            else BeginTurn();
         }
         //Check which key is pressed to determine the card number played, if any
         if (Input.GetKeyDown(KeyCode.Alpha1)) UseCardNumber(1);
@@ -177,11 +194,12 @@ public class GameManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Alpha3)) UseCardNumber(3);
         else if (Input.GetKeyDown(KeyCode.Alpha4)) UseCardNumber(4);
         else if (Input.GetKeyDown(KeyCode.Alpha5)) UseCardNumber(5);
-        else if (!PlayerCardsHope() && Input.GetKeyDown(KeyCode.Alpha6)) ReDrawHand();
+        else if (Input.GetKeyDown(KeyCode.Alpha6)) ReDrawHand();
         else if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             //Forfeit the game
-            turnActive = false;
+            gameOver = true;
+            TurnActive = false;
             EndTurn();
             Debug.Log("You forfeit");
         }
@@ -204,8 +222,8 @@ public class GameManager : MonoBehaviour
         //Display Card info
         Debug.Log("Card Event: " + activeEventCard.cardName);
         Debug.Log("Card Description: " + activeEventCard.cardDesc);
-        Debug.Log("Card Stats Money: " + activeEventCard.costMoney + 
-            " | CO2: " + activeEventCard.costCarbon + 
+        Debug.Log("Card Stats Money: " + activeEventCard.costMoney +
+            " | CO2: " + activeEventCard.costCarbon +
             " | Hope: " + activeEventCard.hope);
 
         EventCardDisplay.Instance.SetCardAndDisplay(activeEventCard);
@@ -214,10 +232,17 @@ public class GameManager : MonoBehaviour
         Money += activeEventCard.costMoney;
         Carbon += activeEventCard.costCarbon;
         negativeHope += activeEventCard.hope;
-        //Hope cannot be greater than 1
-        if(negativeHope > 0)
+
+        // Update Hope
+        if(negativeHope == -3) HopeDisplay.Instance.UpdateHope(HopeCount.Empty);
+        else if(negativeHope == -2) HopeDisplay.Instance.UpdateHope(HopeCount.One);
+        else if(negativeHope == -1) HopeDisplay.Instance.UpdateHope(HopeCount.Two);
+
+        //Hope can only be negative
+        if(negativeHope >= 0)
         {
             negativeHope = 0;
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //Display updated stats
         Debug.Log("Global Stats: Money: " + Money + " | C02: " + Carbon + " | Hope : " + negativeHope);
@@ -227,29 +252,28 @@ public class GameManager : MonoBehaviour
             Debug.Log("A positive hope card must be played");
             hopeValid = false;
         }
-        turnActive = true;
 
         HandManager.Instance.SetCardDisplays(PlayerHand);
         PrintPlayerHand();
-
-        //There are no valid hope cards in hand
-        if (!PlayerCardsHope())
+        if (!PlayerCardsHope() && Money >= 5)
         {
             //Display message based on if the player has enough money for redraw
-            if (Money >= 5)
-            {
-                Debug.Log("There are no valid hope cards in your hand. " +
-                    "You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
-            }
-            else
-            {                
-                gameOver = true;
-                turnActive = false;
-                EndTurn();
-                Debug.Log("There are no valid hope cards in your hand and " +
-                    "you do not have enough money to redraw your hand. You lose");
-            }
+            Debug.Log("There are no valid hope cards in your hand. You can either " +
+                      "pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
+            TurnActive = true;
         }
+        else if (!PlayerCardsHope())
+        {                
+            gameOver = true;
+            TurnActive = false;
+            EndTurn();
+            Debug.Log("There are no valid hope cards in your hand and you do not have enough money " +
+                      "to redraw your hand. You lose");
+        } else
+        {
+            TurnActive = true;
+        }
+        CurrentTurnNumber += 1;
     }
 
     /// <summary>
@@ -257,7 +281,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void PlayCard()
     {
-        if (turnActive && PlayerCardsHope())
+        if (TurnActive && PlayerCardsHope())
         {
             // If this turn has a negative hope event card then 
             // it will check if the card played has a valid hope value
@@ -267,10 +291,10 @@ public class GameManager : MonoBehaviour
                 ValidCard(currentCard);
             }
 
-            // Either the card has passed the appropriate hope checks to be played or 
-            // the player currently has momentum then check what card was played and 
+            // Either the card has passed the appropriate hope checks to be played or
+            // the player currently has momentum then check what card was played and
             // if the position is a valid one to check
-            if (validPos && (hopeValid || hasMomemtum))
+            if (validPos && (hopeValid || hasMomentum))
             {
                 //If this is a momentum run, make sure the card played has momentum
                 if ((hasMomemtum && currentCard.momentum > 0) || !hasMomemtum)
@@ -282,6 +306,7 @@ public class GameManager : MonoBehaviour
                     " CO2:" + currentCard.costCarbon +
                     " Hope:" + currentCard.hope +
                     " Momentum:" + currentCard.momentum);
+                    
                     //Add that card to the activePlayedCards array for stat checking after turn completion
                     activePlayerCards[activePlayerCardCount] = currentCard;
                     //Increment the activePlayerCardCount
@@ -302,7 +327,6 @@ public class GameManager : MonoBehaviour
                     else
                     {
                         hasMomemtum = true;
-
                         //If player has no other momentum cards to play, end turn
                         if (!PlayerCardsMomentum())
                         {
@@ -354,8 +378,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void UseCardByUI(ActionCard card)
     {
-        if (!turnActive) return;
-        else
+        if (!TurnActive)
+        {
+            return;
+        } else
         {
             Debug.Log("Used card " + card.cardName);
             currentCard = card;
@@ -372,16 +398,16 @@ public class GameManager : MonoBehaviour
     {
         //Display that the turn has ended
         Debug.Log("Turn Ended");
-        
+
         //Check if the card has a super event card
         if (CardDataCompiler.Instance.SuperNegativeEventCards.ContainsKey(activeEventCard.cardName))
         {
             //Increment the cards supercastrophe potential
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count),
                 CardDataCompiler.Instance.SuperNegativeEventCards[activeEventCard.cardName]);
         }
 
-        
+
         //Update based on player cards
         for (int i = 0; i < activePlayerCardCount; i++)
         {
@@ -393,15 +419,16 @@ public class GameManager : MonoBehaviour
             negativeHope += activePlayerCards[i].hope;
         }
 
-        //Check if hope is negative
+        //Check if hope is not negative
         if(negativeHope > 0)
         {
             negativeHope = 0;
+            HopeDisplay.Instance.UpdateHope(HopeCount.Full);
         }
         //check momentum for super positive event and if there are remaining super positive cards to be played
         if(activePlayerCardCount >= 3 && CardDataCompiler.Instance.PositiveEventCards.Count > 0)
         {
-            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count), 
+            CurrentEventDeck.Insert(Random.Range(0, CurrentEventDeck.Count),
                 CardDataCompiler.Instance.PositiveEventCards[
                     Random.Range(0, CardDataCompiler.Instance.PositiveEventCards.Count)]);
         }
@@ -415,9 +442,9 @@ public class GameManager : MonoBehaviour
         //reset counter
         activePlayerCardCount = 0;
         //reset values
-        turnActive = false;
+        TurnActive = false;
         hopeValid = true;
-        hasMomemtum = false;
+        hasMomentum = false;
         validPos = true;
 
         //Temporarily display stats
@@ -431,6 +458,12 @@ public class GameManager : MonoBehaviour
 
         //Check the game loss conditions
         GameEnd();
+
+        //If game is not over, begin next turn
+        if (!gameOver)
+        {
+            BeginTurn();
+        }
     }
 
     /// <summary>
@@ -443,11 +476,12 @@ public class GameManager : MonoBehaviour
             //Check if there are no futher cards
             if (CurrentActionDeck.Count == 0)
             {
+                Debug.Log("No more action cards to draw!");
                 break;
             }
             //Draw a card and add it to the player hand
             PlayerHand.Add(CurrentActionDeck[0]);
-            CurrentActionDeck.RemoveAt(0);            
+            CurrentActionDeck.RemoveAt(0);
         } while (PlayerHand.Count < 5);
     }
 
@@ -456,43 +490,44 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void ReDrawHand()
     {
-        //Take away 5 money from player
-        Money -= 5;
-        //Clear the players hand
-        do
+        if (TurnActive)
         {
-            PlayerHand.RemoveAt(0);
-        } while (PlayerHand.Count > 0);
-
-        //Redraw he player hand
-        DrawCards();
-
-        //Display new playerhand
-        if (PlayerCardsHope())
-        {
-            HandManager.Instance.SetCardDisplays(PlayerHand);
-            PrintPlayerHand();
-        }
-        else
-        {
-            //Display message based on if the player has enough money for redraw
-            if (Money >= 5)
+            //Take away 5 money from player
+            Money -= 5;
+            //Clear the players hand
+            do
             {
-                Debug.Log("There are no valid hope cards in your new hand. " +
-                    "You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
-                Debug.Log("Money: " + Money);
-            }
-            else
+                PlayerHand.RemoveAt(0);
+            } while (PlayerHand.Count > 0);
+
+            //Redraw the player hand
+            DrawCards();
+
+            //Display new playerhand
+            if (PlayerCardsHope())
             {
-                gameOver = true;
-                turnActive = false;
-                EndTurn();
-                Debug.Log("There are no valid hope cards in your hand and " +
-                    "you do not have enough money to redraw your hand. You lose");
+                HandManager.Instance.SetCardDisplays(PlayerHand);
+                PrintPlayerHand();
+            } else
+            {
+                //Display message based on if the player has enough money for redraw
+                if (Money >= 5)
+                {
+                    Debug.Log("There are no valid hope cards in your new hand. " +
+                        "You can either pay 5 money to redraw your hand by pressing 6 or forfeit the game by pressing 0");
+                    Debug.Log("Money: " + Money);
+                } else
+                {
+                    gameOver = true;
+                    TurnActive = false;
+                    EndTurn();
+                    Debug.Log("There are no valid hope cards in your hand and " +
+                        "you do not have enough money to redraw your hand. You lose");
+                }
             }
         }
 ;    }
-    
+
     /// <summary>
     /// Outputs information to the log about each card the player is holding.
     /// </summary>
@@ -518,7 +553,7 @@ public class GameManager : MonoBehaviour
     public bool PlayerCardsHope()
     {
         //Check if hope is an issue first
-        if(negativeHope >= 0 || hasMomemtum) return true;
+        if(negativeHope >= 0 || hasMomentum) return true;
         
         //Loop through player hand
         for(int i = 0; i < PlayerHand.Count; i++)
@@ -563,17 +598,18 @@ public class GameManager : MonoBehaviour
 
         if (negativeHope >= 0) return true;
 
-        if((playedCard.hope > 0 || playedCard.hope < 0))
+        if((playedCard.hope != 0))
         {
             hopeValid = true;
             return true;
         } else
         {
+            // If all of these attempts failed, then there is no hope here :(
             Debug.Log("A positive hope card must be played, that card is not valid try again");
             return false;
         }
     }
-    
+
     /// <summary>
     /// Method for ending the game
     /// </summary>
