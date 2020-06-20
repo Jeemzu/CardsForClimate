@@ -153,9 +153,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
   m_Name: SourceSansPro-Black SDF
   m_EditorClassIdentifier: 
-  hashCode: 0
+  hashCode: 1658466820
   material: {fileID: -7279332979148233054}
-  materialHashCode: 0
+  materialHashCode: 2084361743
   m_Version: 1.1.0
   m_SourceFontFileGUID: 7c144d2ad03a0c84b8311fb9980457a0
   m_SourceFontFile_EditorRef: {fileID: 0}
