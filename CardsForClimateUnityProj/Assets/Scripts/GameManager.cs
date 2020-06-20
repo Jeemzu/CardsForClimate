@@ -297,7 +297,7 @@ public class GameManager : MonoBehaviour
             if (validPos && (hopeValid || hasMomentum))
             {
                 //If this is a momentum run, make sure the card played has momentum
-                if ((hasMomemtum && currentCard.momentum > 0) || !hasMomemtum)
+                if ((hasMomentum && currentCard.momentum > 0) || !hasMomentum)
                 {
                     //Display the name of the card the player has played
                     Debug.Log("Card played Name: " + currentCard.cardName +
@@ -326,7 +326,7 @@ public class GameManager : MonoBehaviour
                     //Card played has momentum
                     else
                     {
-                        hasMomemtum = true;
+                        hasMomentum = true;
                         //If player has no other momentum cards to play, end turn
                         if (!PlayerCardsMomentum())
                         {
@@ -571,7 +571,7 @@ public class GameManager : MonoBehaviour
     public bool PlayerCardsMomentum()
     {
         //Check if it is a momentum run
-        if (hasMomemtum == false) return true;
+        if (hasMomentum == false) return true;
 
         //Loop through player hand
         for(int i = 0; i < PlayerHand.Count; i++)
@@ -590,7 +590,7 @@ public class GameManager : MonoBehaviour
     public bool ValidCard(ActionCard playedCard)
     {
         // Make sure card played is valid given momentum constraints
-        if (hasMomemtum && playedCard.momentum <= 0)
+        if (hasMomentum && playedCard.momentum <= 0)
         {
             Debug.Log("Card played must have momentum during a momentum run.");
             return false;
