@@ -150,6 +150,25 @@ public class ActionCardDisplay : MonoBehaviour, IBeginDragHandler, IDragHandler,
     }
 
     /// <summary>
+    /// Used to tell when user is grabbing card on a mobile device
+    /// </summary>
+    public void OnTouch()
+    {
+        if (Input.touchCount > 0)
+        {
+            Hovered = true;
+        }
+    }
+
+    public void OnEndTouch()
+    {
+        if (Input.touchSupported)
+        {
+            Hovered = false;
+        }
+    }
+
+    /// <summary>
     /// Implemented by the IBeginDragHandler interface. Called when the user begins dragging the card with the mouse.
     /// </summary>
     public void OnBeginDrag(PointerEventData eventData)
