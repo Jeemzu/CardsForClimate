@@ -22,7 +22,7 @@ public class CardCatcher : MonoBehaviour
     /// </summary>
     public void CatchCard(ActionCardDisplay card)
     {
-        GameObject caughtCard = Instantiate<GameObject>(card.gameObject, transform);
+        GameObject caughtCard = Instantiate(card.gameObject, transform);
         caughtCard.transform.localScale = caughtCardScale;
     }
 
